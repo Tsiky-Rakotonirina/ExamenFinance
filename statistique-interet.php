@@ -1,0 +1,85 @@
+<link rel="stylesheet" href="css/index.css">
+<script src="js/statistique-interet.js"></script>
+
+<div>
+    <h3>Statistiques des Intérêts par Mois</h3>
+    <form id="filtrer-statistiques">
+        <label>Mois Année de début :
+            <select id="mois_min" required>
+                <option value="">-- Mois --</option>
+                <option value="1">Janvier</option>
+                <option value="2">Février</option>
+                <option value="3">Mars</option>
+                <option value="4">Avril</option>
+                <option value="5">Mai</option>
+                <option value="6">Juin</option>
+                <option value="7">Juillet</option>
+                <option value="8">Août</option>
+                <option value="9">Septembre</option>
+                <option value="10">Octobre</option>
+                <option value="11">Novembre</option>
+                <option value="12">Décembre</option>
+            </select>
+            <input type="number" id="annee_min" placeholder="Année" required>
+        </label>
+        <label>Date de fin :
+            <select id="mois_max" required>
+                <option value="">-- Mois --</option>
+                <option value="1">Janvier</option>
+                <option value="2">Février</option>
+                <option value="3">Mars</option>
+                <option value="4">Avril</option>
+                <option value="5">Mai</option>
+                <option value="6">Juin</option>
+                <option value="7">Juillet</option>
+                <option value="8">Août</option>
+                <option value="9">Septembre</option>
+                <option value="10">Octobre</option>
+                <option value="11">Novembre</option>
+                <option value="12">Décembre</option>
+            </select>
+
+            <input type="number" id="annee_max" placeholder="Année" required>
+        </label>
+        <button id="btn-filtrer-statistiques" type="button">Afficher</button>
+    </form>
+</div>
+<br>
+<div>
+    <table id="lister-statistiques-interets">
+        <thead>
+            <tr>
+                <th>Mois</th>
+                <th>Janvier</th>
+                <th>Février</th>
+                <th>Mars</th>
+                <th>Avril</th>
+                <th>Mai</th>
+                <th>Juin</th>
+                <th>Juillet</th>
+                <th>Août</th>
+                <th>Septembre</th>
+                <th>Octobre</th>
+                <th>Novembre</th>
+                <th>Décembre</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Intérêts (€)</td>
+                <td id="interet-1">0.00</td>
+                <td id="interet-2">0.00</td>
+                <td id="interet-3">0.00</td>
+                <td id="interet-4">0.00</td>
+                <td id="interet-5">0.00</td>
+                <td id="interet-6">0.00</td>
+                <td id="interet-7">0.00</td>
+                <td id="interet-8">0.00</td>
+                <td id="interet-9">0.00</td>
+                <td id="interet-10">0.00</td>
+                <td id="interet-11">0.00</td>
+                <td id="interet-12">0.00</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

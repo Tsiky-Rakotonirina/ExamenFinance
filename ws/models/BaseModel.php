@@ -1,16 +1,13 @@
 <?php
 
-namespace app\models;
+require_once __DIR__ . '/../db.php';
 
-class BaseModel {
-    protected $db;
-    
-    public function __construct($db) {
-        $this->db = $db;
-    }
-
-    public function executeQuery(string $query, array $parameters): array {
-        if (!$this->db) {
+class BaseModel
+{
+    public  static function executeQuery(string $query, array $parameters): array
+    {
+        $db = getDB();
+        if (!$db) {
             return [
                 'succes' => false,
                 'data' => null,
@@ -18,7 +15,7 @@ class BaseModel {
             ];
         }
         try {
-            $stmt = $this->db->prepare($query);
+            $stmt = $db->prepare($query);
             if ($parameters) {
                 $stmt->execute($parameters);
             } else {
@@ -39,15 +36,17 @@ class BaseModel {
         }
     }
 
-    public function executeUpdate(string $query, array $parameters): array {
-        if (!$this->db) {
+    public static function executeUpdate(string $query, array $parameters): array
+    {
+        $db = getDB();
+        if (!$db) {
             return [
                 'succes' => false,
                 'message' => 'Pas de connexion active.'
             ];
         }
         try {
-            $stmt = $this->db->prepare($query);
+            $stmt = $db->prepare($query);
             if ($parameters) {
                 $stmt->execute($parameters);
             } else {
@@ -65,30 +64,33 @@ class BaseModel {
         }
     }
 
-    public function insererDonnee(string $table, array $data): array {
+    public static function insererDonnee(string $table, array $data): array
+    {
         if (empty($data)) {
             return [
                 'succes' => false,
-                 'message' => 'Aucune donnee fournie pour insertion.'
+                'message' => 'Aucune donnee fournie pour insertion.'
             ];
         }
         $colonnes = array_keys($data);
         $placeholders = array_map(fn($col) => ':' . $col, $colonnes);
         $sql = "INSERT INTO `$table` (" . implode(', ', $colonnes) . ") VALUES (" . implode(', ', $placeholders) . ")";
-        return $this->executeUpdate($sql, $data);
+        return self::executeUpdate($sql, $data);
     }
 
-    public function supprimerDonnee(string $table, array $data): array {
+    public function supprimerDonnee(string $table, array $data): array
+    {
         $clauses = [];
         foreach ($data as $col => $val) {
             $clauses[] = "$col = :$col";
         }
         $where = implode(' AND ', $clauses);
         $sql = "DELETE FROM `$table` WHERE $where";
-        return $this->executeUpdate($sql, $data);
+        return self::executeUpdate($sql, $data);
     }
 
-    public function modifierDonnee(string $table, array $data, array $conditions): array {
+    public function modifierDonnee(string $table, array $data, array $conditions): array
+    {
         if (empty($data)) {
             return [
                 'succes' => false,
@@ -111,10 +113,11 @@ class BaseModel {
         foreach ($conditions as $col => $val) {
             $parameters['cond_' . $col] = $val;
         }
-        return $this->executeUpdate($sql, $parameters);
+        return self::executeUpdate($sql, $parameters);
     }
 
-    public function selectionnerDonnee(string $table, array $conditions = []): array {
+    public static function selectionnerDonnee(string $table, array $conditions = []): array
+    {
         $where = [];
         $parameters = [];
         foreach ($conditions as $key => $val) {
@@ -145,10 +148,11 @@ class BaseModel {
         if (!empty($where)) {
             $sql .= " WHERE " . implode(' AND ', $where);
         }
-        return $this->executeQuery($sql, $parameters);
+        return self::executeQuery($sql, $parameters);
     }
 
-    public function chercherDonnee(string $table, array $conditions = []): array {
+    public static function chercherDonnee(string $table, array $conditions = []): array
+    {
         $where = [];
         $parameters = [];
         foreach ($conditions as $col => $val) {
@@ -159,16 +163,16 @@ class BaseModel {
         if (!empty($where)) {
             $sql .= " WHERE " . implode(' AND ', $where);
         }
-        return $this->executeQuery($sql, $parameters);
+        return self::executeQuery($sql, $parameters);
     }
 
-    public function ordronnerDonnee(string $table, string $orderBy, string $direction = 'ASC'): array {
+    public static function ordronnerDonnee(string $table, string $orderBy, string $direction = 'ASC'): array
+    {
         $dir = strtoupper($direction);
         if (!in_array($dir, ['ASC', 'DESC'])) {
             $dir = 'ASC';
         }
         $sql = "SELECT * FROM `$table` ORDER BY `$orderBy` $dir";
-        return $this->executeQuery($sql, []);
+        return self::executeQuery($sql, []);
     }
-
 }

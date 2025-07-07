@@ -1,3 +1,4 @@
+
 -- Table : fond
 CREATE TABLE fond (
     id_fond INT AUTO_INCREMENT PRIMARY KEY,
@@ -15,7 +16,7 @@ CREATE TABLE status_type_pret (
 CREATE TABLE type_pret (
     id_type_pret INT AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(100) NOT NULL,
-    date_type_pret DATE NOT NULL DEFAULT CURRENT_DATE,
+    date_type_pret DATE NOT NULL,
     status_type_pret_id INT NOT NULL,
     mois_max INT NOT NULL,
     montant_max DECIMAL(15,2) NOT NULL,
@@ -30,9 +31,10 @@ CREATE TABLE historique_type_pret (
     type_pret_id INT NOT NULL,
     date_type_pret DATE NOT NULL,
     status_type_pret INT NOT NULL,
-    duree_max INT NOT NULL,
+    mois_max INT NOT NULL,
     montant_max DECIMAL(15,2) NOT NULL,
-    taux DECIMAL(5,2) NOT NULL,
+    taux_annuel DECIMAL(5,2) NOT NULL,
+    echeance_initiale INT NOT NULL,
     FOREIGN KEY (type_pret_id) REFERENCES type_pret(id_type_pret),
     FOREIGN KEY (status_type_pret) REFERENCES status_type_pret(id_type_pret)
 );
@@ -65,8 +67,8 @@ CREATE TABLE compte (
 -- Table : pret
 CREATE TABLE pret (
     id_pret INT AUTO_INCREMENT PRIMARY KEY,
-    date_pret DATE NOT NULL DEFAULT CURRENT_DATE,
-    type_pret_id INT NOT NULL,
+    date_pret DATE NOT NULL,
+    type_pret_id INT  NOT NULL,
     compte_id INT NOT NULL,
     montant DECIMAL(15,2) NOT NULL,
     duree INT NOT NULL,
@@ -74,6 +76,7 @@ CREATE TABLE pret (
     FOREIGN KEY (compte_id) REFERENCES compte(id_compte)
 );
 
+-- Table : periode
 CREATE TABLE periode (
     id_periode INT AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(100) NOT NULL,
@@ -81,20 +84,21 @@ CREATE TABLE periode (
     libelle INT NOT NULL
 );
 
-
+-- Table : remboursement
 CREATE TABLE remboursement (
     id_remboursement INT AUTO_INCREMENT PRIMARY KEY,
     pret_id INT NOT NULL,
     numero_periode INT NOT NULL,
+    periode_id INT NOT NULL,
     base DECIMAL(15,2) NOT NULL,
     interet DECIMAL(15,2) NOT NULL,
     amortissement DECIMAL(15,2) NOT NULL,
     a_payer DECIMAL(15,2) NOT NULL,
     date_remboursement DATE,
     date_echeance DATE NOT NULL,
+    FOREIGN KEY (periode_id) REFERENCES periode(id_periode),
     FOREIGN KEY (pret_id) REFERENCES pret(id_pret)
 );
-
 -- Vue pour les types de prêt actifs
 CREATE OR REPLACE VIEW vue_type_pret_actif AS
 SELECT * FROM type_pret WHERE status_type_pret_id = 1;
