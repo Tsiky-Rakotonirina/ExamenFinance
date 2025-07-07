@@ -52,28 +52,12 @@ class StatistiqueInteretController
         $sql = "
             SELECT 
                 MONTH(r.date_echeance) AS mois,
-                SUM(r.interet / p.nombre_mois) AS interet_mensuel
+                SUM(r.interet) AS interet_mensuel
             FROM remboursement r
-            JOIN periode p ON r.periode_id = p.id_periode
             WHERE r.date_echeance >= :date_debut
             AND r.date_echeance <= :date_fin
             GROUP BY MONTH(r.date_echeance)
-            UNION
-            SELECT 
-                m.mois + n.n AS mois,
-                SUM(r.interet / p.nombre_mois) AS interet_mensuel
-            FROM remboursement r
-            JOIN periode p ON r.periode_id = p.id_periode
-            CROSS JOIN (SELECT 0 AS n UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5) n
-            CROSS JOIN (SELECT 1 AS mois UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 
-                        UNION SELECT 7 UNION SELECT 8 UNION SELECT 9 UNION SELECT 10 UNION SELECT 11 UNION SELECT 12) m
-            WHERE p.nombre_mois > 1
-            AND r.date_echeance >= :date_debut
-            AND r.date_echeance <= :date_fin
-            AND m.mois + n <= 12
-            AND m.mois + n >= MONTH(r.date_echeance)
-            AND m.mois < MONTH(r.date_echeance) + p.nombre_mois
-            GROUP BY m.mois + n
+            ORDER BY mois
         ";
         $params = [
             'date_debut' => $dateDebut->format('Y-m-d'),
