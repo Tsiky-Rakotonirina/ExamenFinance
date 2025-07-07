@@ -6,7 +6,8 @@
     <title>Document</title>
 </head>
 <body>
-    <a href="template.php?page=statistique-interet">STATISTIQUES</a>
-    <a href="template.php?page=gestion-compte">GESTION FOND</a>
+    <a href="template.php?page=gestion-type-pret">GESTION FOND</a><br>
+    <a href="template.php?page=gestion-compte">GESTION TYPE PRET</a><br>
+    <a href="template.php?page=statistique-interet">STATISTIQUES</a><br>
 </body>
 </html>

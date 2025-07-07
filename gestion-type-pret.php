@@ -1,5 +1,5 @@
-<link rel="stylesheet" href="<?= $url ?>/public/assets/css/index.css">
-<script src="<?= $url ?>/public/assets/js/gestionTypePret/gestionTypePret.js"></script>
+<link rel="stylesheet" href="css/index.css">
+<script src="js/gestionTypePret.js"></script>
 
 <div>
     <h3>Ajout Type de Prêt</h3>
