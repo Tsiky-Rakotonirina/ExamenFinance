@@ -18,9 +18,10 @@ CREATE TABLE type_pret (
     nom VARCHAR(100) NOT NULL,
     date_type_pret DATE NOT NULL,
     status_type_pret_id INT NOT NULL,
-    duree_max INT NOT NULL,
+    mois_max INT NOT NULL,
     montant_max DECIMAL(15,2) NOT NULL,
-    taux DECIMAL(5,2) NOT NULL,
+    taux_annuel DECIMAL(5,2) NOT NULL,
+    echeance_initiale INT NOT NULL,
     FOREIGN KEY (status_type_pret_id) REFERENCES status_type_pret(id_type_pret)
 );
 
@@ -30,11 +31,13 @@ CREATE TABLE historique_type_pret (
     type_pret_id INT NOT NULL,
     date_type_pret DATE NOT NULL,
     status_type_pret INT NOT NULL,
-    duree_max INT NOT NULL,
+    mois_max INT NOT NULL,
     montant_max DECIMAL(15,2) NOT NULL,
-    taux DECIMAL(5,2) NOT NULL,
+    taux_annuel DECIMAL(5,2) NOT NULL,
+    echeance_initiale INT NOT NULL,
     FOREIGN KEY (type_pret_id) REFERENCES type_pret(id_type_pret),
     FOREIGN KEY (status_type_pret) REFERENCES status_type_pret(id_type_pret)
+    
 );
 
 -- Table : client
