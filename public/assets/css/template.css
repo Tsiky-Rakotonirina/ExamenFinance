@@ -1,0 +1,232 @@
+/* 
+ * ExamenFinance - Template CSS
+ * Design moderne et professionnel avec thème bleu pâle/gris
+ * Focus sur header et footer uniquement
+ */
+
+/* -------------- VARIABLES -------------- */
+:root {
+    /* Palette de couleurs principale */
+    --primary-color: #4a6da7;
+    --primary-light: #d9e2f3;
+    --primary-dark: #2d3e50;
+    
+    /* Couleurs secondaires */
+    --secondary-color: #607d8b;
+    --secondary-light: #e1e7ea;
+    --secondary-dark: #455a64;
+    
+    /* Couleurs neutres */
+    --neutral-100: #ffffff;
+    --neutral-200: #f5f7fa;
+    --neutral-300: #e6eaef;
+    --neutral-400: #c8d0d9;
+    --neutral-500: #8c98a4;
+    --neutral-600: #68757f;
+    --neutral-700: #49545c;
+    
+    /* Espacement */
+    --space-xs: 0.25rem;
+    --space-sm: 0.5rem;
+    --space-md: 1rem;
+    --space-lg: 1.5rem;
+    --space-xl: 2rem;
+    --space-xxl: 3rem;
+    
+    /* Bordures et ombres */
+    --border-radius-sm: 0.25rem;
+    --box-shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+    --box-shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
+    
+    /* Transitions */
+    --transition-normal: 0.25s ease-in-out;
+}
+
+/* Reset minimal */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--neutral-200);
+}
+
+/* -------------- HEADER -------------- */
+header {
+    background-color: var(--neutral-100);
+    box-shadow: var(--box-shadow-sm);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid var(--neutral-300);
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-lg) var(--space-xxl);
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.header-logo {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.header-logo i {
+    font-size: 2rem;
+    color: var(--primary-dark);
+}
+
+.header-logo span {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--primary-dark);
+    letter-spacing: 1px;
+}
+
+header nav {
+    display: flex;
+    gap: var(--space-md);
+}
+
+/* Boutons de navigation */
+.btn {
+    display: inline-block;
+    font-weight: 600;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    user-select: none;
+    border: 1px solid transparent;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    border-radius: var(--border-radius-sm);
+    text-decoration: none;
+    cursor: pointer;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+}
+
+.btn-primary {
+    color: var(--neutral-100);
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    box-shadow: 0 2px 4px rgba(74, 109, 167, 0.2);
+}
+
+.btn-secondary {
+    color: var(--primary-dark);
+    background-color: var(--secondary-light);
+    border-color: var(--secondary-light);
+    box-shadow: 0 2px 4px rgba(96, 125, 139, 0.15);
+}
+
+/* -------------- FOOTER -------------- */
+footer {
+    background-color: var(--neutral-300);
+    color: var(--neutral-600);
+    text-align: center;
+    padding: var(--space-lg) 0;
+    font-size: 0.95rem;
+    margin-top: auto;
+    border-top: 1px solid var(--neutral-400);
+}
+
+/* -------------- RESPONSIVE -------------- */
+@media (max-width: 992px) {
+    .header-content {
+        flex-direction: column;
+        padding: var(--space-md);
+        gap: var(--space-md);
+    }
+    
+    header nav {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 768px) {
+    header nav {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .btn {
+        width: 100%;
+        margin-bottom: var(--space-xs);
+    }
+}
+
+/* Ajout d'un léger effet au survol du logo */
+.header-logo:hover i {
+    transform: scale(1.05);
+    transition: transform 0.2s ease;
+}
+
+/* Style pour le contenu principal */
+main {
+    flex: 1;
+}
+
+/* -------------- RESPONSIVE -------------- */
+@media (max-width: 992px) {
+    .header-content {
+        flex-direction: column;
+        padding: var(--space-md);
+        gap: var(--space-md);
+    }
+    
+    header nav {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    main {
+        padding: var(--space-md);
+    }
+    
+    .container {
+        padding: 0 var(--space-md);
+    }
+}
+
+@media (max-width: 768px) {
+    header nav {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .btn {
+        width: 100%;
+    }
+    
+    h1 {
+        font-size: 2rem;
+    }
+    
+    h2 {
+        font-size: 1.75rem;
+    }
+}
+
+/* Animation subtile pour les transitions */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.fade-in {
+    animation: fadeIn var(--transition-normal);
+}

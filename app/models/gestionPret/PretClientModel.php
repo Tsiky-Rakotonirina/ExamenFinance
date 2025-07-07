@@ -38,7 +38,8 @@ class PretClientModel extends BaseModel
             'duree' => $data['duree'],
             'compte_id' => $data['compte_id'],
             'periode_id' => $data['periode_id'],
-            'date_pret' => $data['date_pret'] ?? date('Y-m-d')
+            'date_pret' => $data['date_pret'] ?? date('Y-m-d'),
+            'statut_pret_id' => 1
         ];
 
         $resultPret = $this->insererDonnee('pret', $dataPret);
@@ -153,5 +154,10 @@ class PretClientModel extends BaseModel
     public function listerPeriodes()
     {
         return $this->selectionnerDonnee('vue_periode');
+    }
+
+    public function listerStatutsPret()
+    {
+        return $this->selectionnerDonnee('statut_pret');
     }
 }

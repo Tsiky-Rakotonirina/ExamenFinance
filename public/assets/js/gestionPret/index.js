@@ -22,12 +22,29 @@ document.addEventListener('DOMContentLoaded', function() {
     // Reset du filtre
     document.getElementById('reset-filtre').addEventListener('click', function() {
         document.getElementById('filtre-prets').reset();
+        
+        // Enlever la classe active de tous les boutons de tri
+        document.querySelectorAll('.btn-tri').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        
+        // Réinitialiser la direction de tri
+        document.getElementById('tri_direction').value = 'ASC';
+        
         chargerPrets();
     });
 
     // Gestion du tri
     document.querySelectorAll('.btn-tri').forEach(button => {
         button.addEventListener('click', function() {
+            // Enlever la classe active de tous les boutons
+            document.querySelectorAll('.btn-tri').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Ajouter la classe active au bouton cliqué
+            this.classList.add('active');
+            
             const colonne = this.dataset.col;
             const direction = document.getElementById('tri_direction').value;
             trierPrets(colonne, direction);
@@ -231,9 +248,9 @@ function chargerTypesPretFormulaire() {
                                 <strong>${escapeHtml(type.nom)}</strong>
                             </div>
                             <div class="type-pret-details">
-                                <span>Montant max: ${parseFloat(type.montant_max).toLocaleString('fr-FR', {minimumFractionDigits: 2})} €</span>
-                                <span>Durée max: ${type.mois_max} mois</span>
-                                <span>Taux: ${type.taux_annuel}%</span>
+                                <span>${parseFloat(type.montant_max).toLocaleString('fr-FR', {minimumFractionDigits: 2})} € max</span>
+                                <span>${type.mois_max} mois max</span>
+                                <span>Taux ${type.taux_annuel}%</span>
                             </div>
                         </label>
                     `;
@@ -272,8 +289,8 @@ function chargerComptesFormulaire() {
                                 <strong>Compte #${compte.id_compte}</strong>
                             </div>
                             <div class="compte-details">
-                                <span>Client: ${escapeHtml(compte.client_nom || 'N/A')}</span>
-                                <span>Status: ${escapeHtml(compte.status_nom || 'N/A')}</span>
+                                <span>${escapeHtml(compte.client_nom || 'N/A')}</span>
+                                <span>${escapeHtml(compte.status_nom || 'N/A')}</span>
                             </div>
                         </label>
                     `;

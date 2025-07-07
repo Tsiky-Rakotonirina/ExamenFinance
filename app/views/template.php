@@ -21,11 +21,15 @@
 <body>
     <header>
         <div class="header-content">
-            <!-- <a href="<?=$url ?>/" class="logo">ExamenFinance</a> -->
+            <div class="header-logo">
+                <i class="bi bi-cash-coin"></i>
+                <span>Finance</span>
+            </div>
             <nav>
-                <!-- <a href="<?=$url ?>/gestionPret" class="active">Gestion des Prêts</a>
-                <a href="<?=$url ?>/product">Produits</a>
-                <a href="<?=$url ?>/">Accueil</a> -->
+                <a class="btn btn-primary">Statistiques Intérêt</a>
+                <a class="btn btn-secondary">Gestions de Fonds</a>
+                <a class="btn btn-primary">Gestions de Prêts Clients</a>
+                <a class="btn btn-secondary">Gestions Types Prêts</a>
             </nav>
         </div>
     </header>
@@ -33,7 +37,7 @@
         <?php include($folder.$page.".php") ?>    
     </main>
     <footer>
-        <!-- <p>&copy; 2025 ExamenFinance - Système d'Information de Gestion des Prêts</p> -->
+        &copy; <?=date('Y')?> Finance - Système d'information financier
     </footer>
 </body>
 </html>
