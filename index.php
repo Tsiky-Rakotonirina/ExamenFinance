@@ -8,6 +8,7 @@
 <body>
     <a href="template.php?page=gestion-fond">GESTION FOND</a><br>
     <a href="template.php?page=gestion-type-pret">GESTION TYPE PRET</a><br>
+    <a href="template.php?page=gestion-pret-client">GESTION PRET CLIENT</a><br>
     <a href="template.php?page=statistique-interet">STATISTIQUES</a><br>
 </body>
 </html>

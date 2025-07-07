@@ -11,7 +11,7 @@ LEFT JOIN status_compte sc ON c.status_compte_id = sc.id_status
 WHERE c.status_compte_id = 1;
 
 
-
 -- Vue pour les périodes (ordre croissant)
 CREATE OR REPLACE VIEW vue_periode AS
 SELECT * FROM periode ORDER BY nombre_mois ASC;
+

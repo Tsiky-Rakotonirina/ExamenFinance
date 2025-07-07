@@ -1,14 +1,11 @@
 <?php
-
-namespace app\models\gestionPret;
-
-use app\models\BaseModel;
-use DateTime;
+require_once __DIR__ . '/BaseModel.php';
 
 class PretClientModel extends BaseModel
 {
-    public function ajouterPret($data)
+    public static function ajouterPret($data)
     {
+
         $champsObligatoires = ['type_pret_id', 'montant', 'duree', 'compte_id', 'periode_id'];
         foreach ($champsObligatoires as $champ) {
             if (!isset($data[$champ]) || $data[$champ] === '') {
@@ -16,7 +13,7 @@ class PretClientModel extends BaseModel
             }
         }
 
-        $typePret = $this->chercherDonnee('type_pret', ['id_type_pret' => $data['type_pret_id']]);
+        $typePret = self::chercherDonnee('type_pret', ['id_type_pret' => $data['type_pret_id']]);
         if (empty($typePret['data'][0])) {
             return ['succes' => false, 'message' => 'Type de prêt introuvable.'];
         }
@@ -26,7 +23,7 @@ class PretClientModel extends BaseModel
             return ['succes' => false, 'message' => 'Montant ou durée dépasse les limites autorisées.'];
         }
 
-        $periodeInfo = $this->chercherDonnee('periode', ['id_periode' => $data['periode_id']]);
+        $periodeInfo = self::chercherDonnee('periode', ['id_periode' => $data['periode_id']]);
         if (empty($periodeInfo['data'][0])) {
             return ['succes' => false, 'message' => 'Période invalide.'];
         }
@@ -38,10 +35,11 @@ class PretClientModel extends BaseModel
             'duree' => $data['duree'],
             'compte_id' => $data['compte_id'],
             'periode_id' => $data['periode_id'],
-            'date_pret' => $data['date_pret'] ?? date('Y-m-d')
+            'date_pret' => $data['date_pret'] ?? date('Y-m-d'),
+            'status_pret_id' => 1
         ];
 
-        $resultPret = $this->insererDonnee('pret', $dataPret);
+        $resultPret = self::insererDonnee('pret', $dataPret);
         if (!$resultPret['succes']) return $resultPret;
 
         $pretId = $resultPret['lastInsertId'];
@@ -53,12 +51,11 @@ class PretClientModel extends BaseModel
         );
 
         $dateEcheance = new DateTime($dataPret['date_pret']);
-        $remboursementModel = new RemboursementClientModel($this->db);
 
         foreach ($tableau as $ligne) {
             $moisTotal = (($ligne['periode'] - 1) * $nbMoisParPeriode) + $type['echeance_initiale'];
             $dateEcheanceLigne = (clone $dateEcheance)->modify('+' . $moisTotal . ' months');
-            $remboursementModel->ajouterRemboursement([
+            self::ajouterRemboursement([
                 'pret_id' => $pretId,
                 'numero_periode' => $ligne['periode'],
                 'base' => $ligne['capital_debut'],
@@ -113,9 +110,9 @@ class PretClientModel extends BaseModel
         return round(($capital * $i) / (1 - pow(1 + $i, -$nbPeriodes)), 2);
     }
 
-    public function listerPrets($conditions = [], $orderBy = null, $direction = 'ASC')
+    public static function listerPrets($conditions = [], $orderBy = null, $direction = 'ASC')
     {
-        $result = $this->selectionnerDonnee('pret', $conditions);
+        $result = self::selectionnerDonnee('pret', $conditions);
         if ($orderBy && $result['succes'] && !empty($result['data'])) {
             usort($result['data'], function ($a, $b) use ($orderBy, $direction) {
                 if ($a[$orderBy] == $b[$orderBy]) return 0;
@@ -125,33 +122,86 @@ class PretClientModel extends BaseModel
         return $result;
     }
 
-    public function getPretById($id)
+    public static function getPretById($id)
     {
-        return $this->chercherDonnee('pret', ['id_pret' => $id]);
+        return self::chercherDonnee('pret', ['id_pret' => $id]);
     }
 
-    public function modifierPret($id, $data)
+    public static function modifierPret($id, $data)
     {
-        return $this->modifierDonnee('pret', $data, ['id_pret' => $id]);
+        return self::modifierDonnee('pret', $data, ['id_pret' => $id]);
     }
 
-    public function supprimerPret($id)
+    public static function supprimerPret($id)
     {
-        return $this->supprimerDonnee('pret', ['id_pret' => $id]);
+        return self::supprimerDonnee('pret', ['id_pret' => $id]);
     }
 
-    public function listerTypesPret()
+    public static function listerTypesPret()
     {
-        return $this->selectionnerDonnee('vue_type_pret_actif');
+        return self::selectionnerDonnee('vue_type_pret_actif');
     }
 
-    public function listerComptes()
+    public static function listerComptes()
     {
-        return $this->selectionnerDonnee('vue_compte_detail');
+        return self::selectionnerDonnee('vue_compte_detail');
     }
 
-    public function listerPeriodes()
+    public static function listerPeriodes()
     {
-        return $this->selectionnerDonnee('vue_periode');
+        return self::selectionnerDonnee('vue_periode');
+    }
+
+    public static function ajouterRemboursement($data) {
+        // Champs obligatoires pour la table remboursement
+        $champsObligatoires = ['pret_id', 'numero_periode', 'base', 'interet', 'amortissement', 'a_payer', 'date_echeance'];
+        foreach ($champsObligatoires as $champ) {
+            if (!isset($data[$champ]) || $data[$champ] === '' || $data[$champ] === null) {
+                $msg = "[Remboursement] Champ obligatoire manquant ou vide : $champ | Data: " . json_encode($data);
+                error_log($msg);
+                return [
+                    'succes' => false,
+                    'message' => $msg
+                ];
+            }
+        }
+        // On ne garde que les champs attendus pour la table remboursement
+        $champsRemb = ['pret_id', 'numero_periode', 'base', 'interet', 'amortissement', 'a_payer', 'date_remboursement', 'date_echeance'];
+        $dataRemb = [];
+        foreach ($champsRemb as $champ) {
+            if (array_key_exists($champ, $data)) $dataRemb[$champ] = $data[$champ];
+        }
+        $result = self::insererDonnee('remboursement', $dataRemb);
+        if (!$result['succes']) {
+            error_log('[Remboursement] Erreur insertion: ' . ($result['message'] ?? 'Erreur inconnue') . ' | Data: ' . json_encode($dataRemb));
+        }
+        return $result;
+    }
+
+    // Lister les remboursements (avec conditions optionnelles)
+    public static function listerRemboursements($conditions = [], $orderBy = null, $direction = 'ASC') {
+        $result = self::selectionnerDonnee('remboursement', $conditions);
+        if ($orderBy && $result['succes'] && !empty($result['data'])) {
+            usort($result['data'], function($a, $b) use ($orderBy, $direction) {
+                if ($a[$orderBy] == $b[$orderBy]) return 0;
+                if (strtoupper($direction) === 'DESC') {
+                    return ($a[$orderBy] < $b[$orderBy]) ? 1 : -1;
+                } else {
+                    return ($a[$orderBy] > $b[$orderBy]) ? 1 : -1;
+                }
+            });
+        }
+        return $result;
+    }
+
+    // Obtenir un remboursement par son id
+    public static function getRemboursementById($id) {
+        return self::chercherDonnee('remboursement', ['id_remboursement' => $id]);
+    }
+
+
+    // Lister les remboursements d'un prêt donné
+    public static function listerRemboursementsParPret($pretId) {
+        return self::selectionnerDonnee('remboursement', ['pret_id' => $pretId]);
     }
 }
