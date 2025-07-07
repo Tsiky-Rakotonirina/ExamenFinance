@@ -27,7 +27,7 @@ class PretClientModel extends BaseModel {
                 'message' => 'Le montant dépasse le montant maximal autorisé pour ce type de prêt.'
             ];
         }
-        if ($data['duree'] > $type['duree_max']) {
+        if ($data['duree'] > $type['mois_max']) {
             return [
                 'succes' => false,
                 'message' => 'La durée dépasse la durée maximale autorisée pour ce type de prêt.'
@@ -66,10 +66,62 @@ class PretClientModel extends BaseModel {
     }
 
     public function listerTypesPret() {
-        return $this->selectionnerDonnee('type_pret');
+        $sql = "SELECT * FROM vue_type_pret_actif";
+        
+        try {
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute();
+            $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            
+            return [
+                'succes' => true,
+                'data' => $result
+            ];
+        } catch (\PDOException $e) {
+            return [
+                'succes' => false,
+                'message' => 'Erreur lors de la récupération des types de prêt: ' . $e->getMessage()
+            ];
+        }
     }
 
     public function listerComptes() {
-        return $this->selectionnerDonnee('compte');
+        $sql = "SELECT * FROM vue_compte_detail";
+        
+        try {
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute();
+            $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            
+            return [
+                'succes' => true,
+                'data' => $result
+            ];
+        } catch (\PDOException $e) {
+            return [
+                'succes' => false,
+                'message' => 'Erreur lors de la récupération des comptes: ' . $e->getMessage()
+            ];
+        }
+    }
+
+    public function listerPeriodes() {
+        $sql = "SELECT * FROM vue_periode";
+        
+        try {
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute();
+            $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            
+            return [
+                'succes' => true,
+                'data' => $result
+            ];
+        } catch (\PDOException $e) {
+            return [
+                'succes' => false,
+                'message' => 'Erreur lors de la récupération des périodes: ' . $e->getMessage()
+            ];
+        }
     }
 }

@@ -12,5 +12,6 @@ $router->post('/gestionPret/ajouter', [ $PretClientController, 'ajouterPret']);
 $router->get('/gestionPret/{id}', [ $PretClientController, 'getPret']);
 $router->get('/gestionPret/listerTypesPret', [ $PretClientController, 'listerTypesPret' ]);
 $router->get('/gestionPret/listerComptes', [ $PretClientController, 'listerComptes' ]);
+$router->get('/gestionPret/listerPeriodes', [ $PretClientController, 'listerPeriodes' ]);
 $router->get('/gestionPret/api/lister', [ $PretClientController, 'listerPretsApi' ]);
 

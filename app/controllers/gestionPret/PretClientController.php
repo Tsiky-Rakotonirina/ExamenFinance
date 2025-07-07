@@ -17,12 +17,10 @@ class PretClientController {
     // Afficher la liste des prêts
     public function index() {
         $prets = $this->pretClientModel->listerPrets();
-        $typesPret = $this->pretClientModel->listerTypesPret();
-        $comptes = $this->pretClientModel->listerComptes();
+        $periodes = $this->pretClientModel->listerPeriodes();
         $data = [
             'prets' => $prets['data'],
-            'types_pret' => $typesPret['data'],
-            'comptes' => $comptes['data'],
+            'periodes' => $periodes['data'],
             'url' => $this->url,
             'folder' => 'gestionPret/',
             'page' => 'index'
@@ -63,6 +61,11 @@ class PretClientController {
 
     public function listerComptes() {
         $result = $this->pretClientModel->listerComptes();
+        Flight::json($result);
+    }
+
+    public function listerPeriodes() {
+        $result = $this->pretClientModel->listerPeriodes();
         Flight::json($result);
     }
 
