@@ -1,0 +1,70 @@
+ body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    form input, form select {
+      margin: 5px;
+      padding: 5px;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px 10px;
+      text-align: left;
+    }
+    th[data-type]::after {
+      content: " ⇅";
+      font-size: 0.8em;
+      color: #aaa;
+    }
+    th.asc::after { content: " ▲"; color: black; }
+    th.desc::after { content: " ▼"; color: black; }
+
+    .actions button {
+      margin-right: 5px;
+    }
+
+    #modifierProduitDiv {
+      display: none;
+      position: fixed;
+      top: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #fff;
+      border: 1px solid #ccc;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      z-index: 1000;
+      width: 300px;
+      box-sizing: border-box;
+      position: fixed;
+    }
+
+    #modifierProduitDiv .close-btn {
+      position: absolute;
+      top: 8px;
+      right: 10px;
+      font-size: 18px;
+      color: #888;
+      cursor: pointer;
+    }
+
+    #modifierProduitDiv h3 {
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+
+    #modifierProduitDiv input, #modifierProduitDiv select {
+      width: 100%;
+      padding: 6px;
+      margin-bottom: 10px;
+      box-sizing: border-box;
+    }
+
+    #modifierProduitDiv button {
+      padding: 6px 12px;
+    }
