@@ -1,9 +1,10 @@
 -- Table : fond
 CREATE TABLE fond (
     id_fond INT AUTO_INCREMENT PRIMARY KEY,
-    date_fond DATE NOT NULL,
-    valeur DECIMAL(15,2) NOT NULL
+    date_fond DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    montant DECIMAL(15,2) NOT NULL
 );
+
 
 -- Table : status_type_pret
 CREATE TABLE status_type_pret (
@@ -48,7 +49,6 @@ CREATE TABLE client (
 -- Table : status_compte
 CREATE TABLE status_compte (
     id_status INT AUTO_INCREMENT PRIMARY KEY,
-    compte VARCHAR(100) NOT NULL,
     nom VARCHAR(100) NOT NULL
 );
 

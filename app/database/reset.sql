@@ -1,3 +1,3 @@
-drop database produit;
-create database produit;
-use produit;
+drop database finance;
+create database finance;
+use finance;

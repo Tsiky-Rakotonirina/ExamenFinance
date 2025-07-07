@@ -12,8 +12,12 @@ class Controller {
 	}
 
     public function index() {
-        // $data = ['folder'=>'', 'page'=>'', 'url'=>$this->url, ];
-        Flight::redirect("/lister-produit");
+        $data = ['folder'=>'', 'page'=>'', 'url'=>$this->url, ];
+        Flight::render("index", $data);
     }
 
+    public function gestionFond() {
+        $data = ['folder'=>'gestionFond/', 'page'=>'gestion-fond', 'url'=>$this->url, ];
+        Flight::render("template", $data);
+    }
 }
