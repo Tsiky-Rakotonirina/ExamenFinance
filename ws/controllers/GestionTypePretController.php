@@ -48,15 +48,16 @@ class GestionTypePretController
 
         // 2. Insérer dans historique_type_pret
         $historiqueData = [
+            'nom' => $row['nom'],
             'type_pret_id'    => $row['id_type_pret'],
             'date_type_pret'  => $row['date_type_pret'],
-            'status_type_pret' => $row['status_type_pret_id'],
+            'status_type_pret_id' => $row['status_type_pret_id'],
             'mois_max'       => $row['mois_max'],
             'montant_max'     => $row['montant_max'],
             'taux_annuel'            => $row['taux_annuel'],
             'echeance_initiale'            => $row['echeance_initiale'],
         ];
-        GestionTypePretModel::insererDonnee('historique_type_pret', $historiqueData);
+        $output0 = GestionTypePretModel::insererDonnee('historique_type_pret', $historiqueData);
 
         // 3. Faire l'UPDATE
         $output = GestionTypePretModel::modifierDonnee('type_pret', $input, ['id_type_pret' => $id]);

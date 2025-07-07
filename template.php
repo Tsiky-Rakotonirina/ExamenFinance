@@ -7,7 +7,20 @@
     <title></title>
     <link rel="stylesheet" href="css/template.css">
     <link rel="stylesheet" href="css/default.css">
-    <script>const urlBase = 'http://localhost:80/S4/ExamenFinance/ws'; </script>
+    <script>
+        const urlBase = 'http://localhost:80/S4/ExamenFinance/ws'; 
+        function ajax(method, url, data, callback) {
+            const xhr = new XMLHttpRequest();
+            xhr.open(method, urlBase + url, true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.onreadystatechange = () => {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    callback(JSON.parse(xhr.responseText));
+                }
+            };
+            xhr.send(data);
+        }
+    </script>
     <script src="js/template.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 </head>

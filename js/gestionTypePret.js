@@ -12,14 +12,13 @@ document.addEventListener('DOMContentLoaded', () => {
         <td>${t.id_type_pret}</td>
         <td>${t.nom}</td>
         <td>${t.date_type_pret ? t.date_type_pret.substr(0, 10) : ''}</td>
-        <td>${t.date_echeance_initiale ? t.date_echeance_initiale.substr(0, 10) : ''}</td>
-        <td>${t.status_nom || 'Inconnu'}</td>
+        <td>${t.status_nom || t.status_type_pret_id}</td>
         <td>${t.mois_max}</td>
         <td>${parseFloat(t.montant_max).toFixed(2)}</td>
         <td>${parseFloat(t.taux_annuel).toFixed(2)}</td>
+        <td>${t.echeance_initiale}</td>
         <td>
           <button class="btn-fiche-type-pret" data-id="${t.id_type_pret}">Modifier</button>
-          <button class="btn-supprimer-type-pret" data-id="${t.id_type_pret}">Supprimer</button>
           <button class="btn-historique-type-pret" data-id="${t.id_type_pret}">Historique</button>
         </td>
       `;
@@ -68,12 +67,11 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelector('#btn-ajouter-type-pret').addEventListener('click', () => {
     const data = {
     nom: document.querySelector('#a_nom').value.trim(),
-    date_type_pret: document.querySelector('#a_date_type_pret').value,
     status_type_pret_id: parseInt(document.querySelector('#a_status_type_pret_id').value),
     mois_max: parseInt(document.querySelector('#a_mois_max').value),
     montant_max: parseFloat(document.querySelector('#a_montant_max').value),
     taux_annuel: parseFloat(document.querySelector('#a_taux_annuel').value),
-  echeance_initiale: parseInt(document.querySelector('#a_echeance_initiale').value)
+    echeance_initiale: parseInt(document.querySelector('#a_echeance_initiale').value)
   };
     if (!data.nom || isNaN(data.montant_max) || isNaN(data.taux_annuel)) {
       alert('Nom, montant max et taux_annuel valides obligatoires');
@@ -108,12 +106,11 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector('#modifier-type-pret-div').style.display = 'block';
         document.querySelector('#m_id_type_pret').value = t.id_type_pret;
         document.querySelector('#m_nom').value = t.nom;
-        document.querySelector('#m_date_type_pret').value = t.date_type_pret ? t.date_type_pret.substr(0, 10) : '';
-       document.querySelector('#m_echeance_initiale').value = t.echeance_initiale;
         document.querySelector('#m_status_type_pret_id').value = t.status_type_pret_id;
         document.querySelector('#m_mois_max').value = t.mois_max;
         document.querySelector('#m_montant_max').value = t.montant_max;
         document.querySelector('#m_taux_annuel').value = t.taux_annuel;
+        document.querySelector('#m_echeance_initiale').value = t.echeance_initiale;
       })
       .catch(err => alert('Erreur chargement type de prêt : ' + err));
   }
@@ -122,15 +119,14 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelector('#modifier-type-pret').addEventListener('submit', e => {
     e.preventDefault();
     const data = {
-  id_type_pret: document.querySelector('#m_id_type_pret').value,
-  nom: document.querySelector('#m_nom').value.trim(),
-  date_type_pret: document.querySelector('#m_date_type_pret').value,
-  status_type_pret_id: parseInt(document.querySelector('#m_status_type_pret_id').value),
-  mois_max: parseInt(document.querySelector('#m_mois_max').value),
-  montant_max: parseFloat(document.querySelector('#m_montant_max').value),
-  taux_annuel: parseFloat(document.querySelector('#m_taux_annuel').value),
-  echeance_initiale: parseInt(document.querySelector('#m_echeance_initiale').value)
-};
+      id_type_pret: document.querySelector('#m_id_type_pret').value,
+      nom: document.querySelector('#m_nom').value.trim(),
+      status_type_pret_id: parseInt(document.querySelector('#m_status_type_pret_id').value),
+      mois_max: parseInt(document.querySelector('#m_mois_max').value),
+      montant_max: parseFloat(document.querySelector('#m_montant_max').value),
+      taux_annuel: parseFloat(document.querySelector('#m_taux_annuel').value),
+      echeance_initiale: parseInt(document.querySelector('#m_echeance_initiale').value)
+    };
     if (!data.nom || isNaN(data.montant_max) || isNaN(data.taux_annuel)) {
       alert('Nom, montant max et taux_annuel valides obligatoires');
       return;
@@ -157,30 +153,12 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelector('#modifier-type-pret-div').style.display = 'none';
   });
 
-  // Supprimer un type de prêt
-  function supprimerTypePret(id) {
-    if (!confirm('Confirmer la suppression ?')) return;
 
-    fetch(urlBase + `/supprimer-type-pret?id_type_pret=${id}`, {
-      method: 'GET',
-    })
-    .then(res => res.json())
-    .then(json => {
-      alert(json.message || (json.succes ? 'Type de prêt supprimé' : 'Erreur suppression'));
-      if (json.succes) {
-        chargerListeTypesPret();
-      }
-    })
-    .catch(err => alert('Erreur suppression : ' + err));
-  }
 
   // Attacher événements Modifier/Supprimer aux boutons
   function attachEventListeners() {
     document.querySelectorAll('.btn-fiche-type-pret').forEach(btn => {
       btn.onclick = () => ouvrirFicheModification(btn.dataset.id);
-    });
-    document.querySelectorAll('.btn-supprimer-type-pret').forEach(btn => {
-      btn.onclick = () => supprimerTypePret(btn.dataset.id);
     });
   }
    // Charger la liste des statuts dans le filtre
@@ -229,7 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   
   function afficherHistoriqueTypePret(id) {
-  fetch(urlBase + '/historique-type-pret?id_type_pret=' + id)
+  fetch(urlBase + '/historique-type-pret?id_type_pret=' + id, {method: 'GET'})
     .then(res => res.json())
     .then(json => {
       const div = document.querySelector('#historique-type-pret-div');
@@ -240,7 +218,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td>${h.date_type_pret ? h.date_type_pret.substr(0,10) : ''}</td>
-          <td>${h.status_nom || h.status_type_pret}</td>
+          <td>${h.nom}</td>
+          <td>${h.status_nom || h.status_type_pret_id}</td>
           <td>${h.mois_max}</td>
           <td>${parseFloat(h.montant_max).toFixed(2)}</td>
           <td>${parseFloat(h.taux_annuel).toFixed(2)}</td>
@@ -256,7 +235,7 @@ document.addEventListener('DOMContentLoaded', () => {
       div.style.display = 'block';
     })
     .catch(err => alert('Erreur chargement historique : ' + err));
-}
+  }
 
 // Fermer la modale historique
 document.querySelector('#btn-fermer-historique').addEventListener('click', () => {
@@ -267,9 +246,6 @@ document.querySelector('#btn-fermer-historique').addEventListener('click', () =>
 function attachEventListeners() {
   document.querySelectorAll('.btn-fiche-type-pret').forEach(btn => {
     btn.onclick = () => ouvrirFicheModification(btn.dataset.id);
-  });
-  document.querySelectorAll('.btn-supprimer-type-pret').forEach(btn => {
-    btn.onclick = () => supprimerTypePret(btn.dataset.id);
   });
   document.querySelectorAll('.btn-historique-type-pret').forEach(btn => {
     btn.onclick = () => afficherHistoriqueTypePret(btn.dataset.id);

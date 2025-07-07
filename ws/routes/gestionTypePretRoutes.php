@@ -6,3 +6,5 @@ Flight::route('GET /lister-status-type-pret',  [$GestionTypePretController, 'lis
 Flight::route('GET /filtrer-type-pret', [$GestionTypePretController, 'filtrerTypePret']);
 Flight::route('PUT /modifier-type-pret', [$GestionTypePretController, 'modifierTypePret']);
 Flight::route('GET /historique-type-pret',[$GestionTypePretController, 'historiqueTypePret']);
+Flight::route('POST /ajouter-type-pret', [$GestionTypePretController, 'ajouterTypePret']);
+
