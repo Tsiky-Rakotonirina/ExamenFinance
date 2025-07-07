@@ -34,14 +34,14 @@ document.addEventListener('DOMContentLoaded', () => {
       method: 'GET',})
       .then(res => res.json())
       .then(json => {
-  if (json.succes) {
-    afficherTypesPret(json.data || []);
-    attachEventListeners();
-  } else {
-    alert(json.message || 'Erreur chargement types de prêt');
-  }
-})
-      .catch(err => alert('Erreur chargement types de prêt : ' + err));
+      if (json.succes) {
+        afficherTypesPret(json.data || []);
+        attachEventListeners();
+      } else {
+        alert(json.message || 'Erreur chargement types de prêt');
+      }
+    })
+    .catch(err => alert('Erreur chargement types de prêt : ' + err));
   }
 
   // Événement bouton Filtrer
@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
     date_type_pret_min: document.querySelector('#f_date_type_pret_min').value,
     date_type_pret_max: document.querySelector('#f_date_type_pret_max').value,
     echeance_initiale_min: document.querySelector('#f_echeance_initiale_min').value,
-echeance_initiale_max: document.querySelector('#f_echeance_initiale_max').value,
+    echeance_initiale_max: document.querySelector('#f_echeance_initiale_max').value,
     status_type_pret_id: document.querySelector('#f_status_type_pret_id').value,
     mois_max_min: document.querySelector('#f_mois_max_min').value,
     mois_max_max: document.querySelector('#f_mois_max_max').value,
@@ -67,14 +67,14 @@ echeance_initiale_max: document.querySelector('#f_echeance_initiale_max').value,
   // Événement bouton Ajouter
   document.querySelector('#btn-ajouter-type-pret').addEventListener('click', () => {
     const data = {
-  nom: document.querySelector('#a_nom').value.trim(),
-  date_type_pret: document.querySelector('#a_date_type_pret').value,
-  status_type_pret_id: parseInt(document.querySelector('#a_status_type_pret_id').value),
-  mois_max: parseInt(document.querySelector('#a_mois_max').value),
-  montant_max: parseFloat(document.querySelector('#a_montant_max').value),
-  taux_annuel: parseFloat(document.querySelector('#a_taux_annuel').value),
- echeance_initiale: parseInt(document.querySelector('#a_echeance_initiale').value)
-};
+    nom: document.querySelector('#a_nom').value.trim(),
+    date_type_pret: document.querySelector('#a_date_type_pret').value,
+    status_type_pret_id: parseInt(document.querySelector('#a_status_type_pret_id').value),
+    mois_max: parseInt(document.querySelector('#a_mois_max').value),
+    montant_max: parseFloat(document.querySelector('#a_montant_max').value),
+    taux_annuel: parseFloat(document.querySelector('#a_taux_annuel').value),
+  echeance_initiale: parseInt(document.querySelector('#a_echeance_initiale').value)
+  };
     if (!data.nom || isNaN(data.montant_max) || isNaN(data.taux_annuel)) {
       alert('Nom, montant max et taux_annuel valides obligatoires');
       return;
@@ -237,15 +237,15 @@ echeance_initiale_max: document.querySelector('#f_echeance_initiale_max').value,
       tbody.innerHTML = '';
       if (json.data && json.data.length > 0) {
         json.data.forEach(h => {
-          const tr = document.createElement('tr');
-         tr.innerHTML = `
-  <td>${h.date_type_pret ? h.date_type_pret.substr(0,10) : ''}</td>
-  <td>${h.status_nom || h.status_type_pret}</td>
-  <td>${h.mois_max}</td>
-  <td>${parseFloat(h.montant_max).toFixed(2)}</td>
-  <td>${parseFloat(h.taux_annuel).toFixed(2)}</td>
-  <td>${h.echeance_initiale}</td>
-`;
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${h.date_type_pret ? h.date_type_pret.substr(0,10) : ''}</td>
+          <td>${h.status_nom || h.status_type_pret}</td>
+          <td>${h.mois_max}</td>
+          <td>${parseFloat(h.montant_max).toFixed(2)}</td>
+          <td>${parseFloat(h.taux_annuel).toFixed(2)}</td>
+          <td>${h.echeance_initiale}</td>
+        `;
           tbody.appendChild(tr);
         });
       } else {

@@ -1,7 +1,7 @@
 -- Table : fond
 CREATE TABLE fond (
     id_fond INT AUTO_INCREMENT PRIMARY KEY,
-    date_fond DATE NOT NULL,
+    date_fond DATE NOT NULL  DEFAULT CURRENT_DATE,
     montant DECIMAL(15,2) NOT NULL
 );
 

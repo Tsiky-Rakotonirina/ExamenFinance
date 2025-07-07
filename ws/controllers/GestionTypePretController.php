@@ -2,7 +2,6 @@
 require_once __DIR__ . '/../models/GestionTypePretModel.php';
 require_once __DIR__ . '/../helpers/Utils.php';
 
-
 class GestionTypePretController
 {
     public function listerStatusTypePret()

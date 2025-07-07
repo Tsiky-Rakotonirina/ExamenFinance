@@ -75,8 +75,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  
-
   // Charger la liste des fonds avec filtres
   function chargerDonneesPage(params = {}) {
   const query = new URLSearchParams(params).toString();

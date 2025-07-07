@@ -7,12 +7,17 @@
         <div class="left-panel">
             <h3>Ajout Type de Prêt</h3>
             <form id="ajouter-type-pret">
+                <label for="nom">Nom :</label>
                 <input type="text" id="a_nom" placeholder="Nom" required>
-                <input type="date" id="a_date_type_pret" placeholder="Date du type de prêt" required>
+                <label for="status_pret">Status pret :</label>
                 <select id="a_status_type_pret_id" required></select>
+                <label for="Mois max">Mois max :</label>
                 <input type="number" id="a_mois_max" placeholder="Durée max (mois)" required>
+                <label for="montant_max">Montant max :</label>
                 <input type="number" id="a_montant_max" placeholder="Montant max" step="0.01" required>
+                <label for="taux_annuel">Taux annuel :</label>
                 <input type="number" id="a_taux_annuel" placeholder="Taux annuel (%)" step="0.01" required>
+                <label for="echeance_initiale">Echeance initiale :</label>
                 <input type="number" id="a_echeance_initiale" placeholder="Échéance initiale (entier)" required>
                 <button id="btn-ajouter-type-pret" type="button">Ajouter</button>
             </form>
@@ -23,13 +28,13 @@
                 <h3>Filtre Type de Prêt</h3>
                 <div id="filtrer-type-pret" class="filter-row">
                     <label>Nom contient : <input type="text" id="f_nom" placeholder="Texte"></label>
-                    <label>Date min : <input type="date" id="f_date_type_pret_min"></label>
-                    <label>Date max : <input type="date" id="f_date_type_pret_max"></label>
                     <label>Statut :
                         <select id="f_status_type_pret_id">
                             <option value="">-- Tous --</option>
                         </select>
                     </label>
+                    <label>Date min : <input type="date" id="f_date_type_pret_min"></label>
+                    <label>Date max : <input type="date" id="f_date_type_pret_max"></label>
                     <label>Durée max min : <input type="number" id="f_mois_max_min" placeholder="Min"></label>
                     <label>Durée max max : <input type="number" id="f_mois_max_max" placeholder="Max"></label>
                     <label>Montant max min : <input type="number" id="f_montant_max_min" step="0.01" placeholder="Min"></label>
