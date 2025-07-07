@@ -25,4 +25,5 @@
    by Dick Williams, rjw1@tyrell.net
 */
 $ds = DIRECTORY_SEPARATOR;
-require(__DIR__. $ds . 'app' . $ds . 'config' . $ds . 'bootstrap.php');
+require(__DIR__ . $ds . 'app' . $ds . 'config' . $ds . 'bootstrap.php');
+require_once __DIR__ . '/app/config/services.php';

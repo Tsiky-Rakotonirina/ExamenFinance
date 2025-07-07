@@ -1,19 +1,22 @@
 <?php
 
 namespace app\controllers;
+
 use Flight;
 use app\models\BaseModel;
 
-class Controller {
+class Controller
+{
     protected $url;
 
-	public function __construct($url) {
-        $this->url=$url;
-	}
+    public function __construct($url)
+    {
+        $this->url = $url;
+    }
 
-    public function index() {
+    public function index()
+    {
         // $data = ['folder'=>'', 'page'=>'', 'url'=>$this->url, ];
         Flight::redirect("/lister-produit");
     }
-
 }

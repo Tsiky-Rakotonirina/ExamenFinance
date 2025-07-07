@@ -1,9 +1,9 @@
-<link rel="stylesheet" href="<?=$url ?>/public/assets/css/index.css">
-<script src="<?=$url ?>/public/assets/js/index.js"></script>
+<link rel="stylesheet" href="<?= $url ?>/public/assets/css/index.css">
+<script src="<?= $url ?>/public/assets/js/index.js"></script>
 
 <div>
   <h3>Ajout Produit</h3>
-  
+
   <form id="ajouter-produit">
     <input type="text" id="a_nom" placeholder="Nom" required>
     <input type="text" id="a_description" placeholder="Description" required>
@@ -54,7 +54,7 @@
       </tr>
     </thead>
     <tbody>
-      
+
     </tbody>
   </table>
 </div>
