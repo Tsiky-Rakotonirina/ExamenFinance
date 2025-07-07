@@ -69,14 +69,36 @@ class BaseModel {
         if (empty($data)) {
             return [
                 'succes' => false,
-                 'message' => 'Aucune donnee fournie pour insertion.'
+                'message' => 'Aucune donnee fournie pour insertion.'
             ];
         }
         $colonnes = array_keys($data);
         $placeholders = array_map(fn($col) => ':' . $col, $colonnes);
         $sql = "INSERT INTO `$table` (" . implode(', ', $colonnes) . ") VALUES (" . implode(', ', $placeholders) . ")";
-        return $this->executeUpdate($sql, $data);
+        
+        if (!$this->db) {
+            return [
+                'succes' => false,
+                'message' => 'Pas de connexion active.'
+            ];
+        }
+        
+        try {
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($data);
+            return [
+                'succes' => true,
+                'lastInsertId' => $this->db->lastInsertId(),
+                'message' => 'Insertion effectuee avec succes.'
+            ];
+        } catch (\PDOException $e) {
+            return [
+                'succes' => false,
+                'message' => 'Erreur lors de l insertion : ' . $e->getMessage()
+            ];
+        }
     }
+
 
     public function supprimerDonnee(string $table, array $data): array {
         $clauses = [];

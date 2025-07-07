@@ -139,12 +139,14 @@ function afficherPrets(prets) {
 // Ajouter un prêt
 function ajouterPret() {
     const formData = new FormData(document.getElementById('ajouter-pret'));
-    
-    fetch('/gestionPret/ajouter', {
+    fetch(apiUrl('/gestionPret/ajouter'), {
         method: 'POST',
         body: formData
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        return response.json();
+    })
     .then(data => {
         if (data.succes) {
             alert('Prêt ajouté avec succès!');
@@ -156,7 +158,7 @@ function ajouterPret() {
     })
     .catch(error => {
         console.error('Erreur lors de l\'ajout du prêt:', error);
-        alert('Erreur lors de l\'ajout du prêt');
+        alert('Erreur lors de l\'ajout du prêt: ' + error.message);
     });
 }
 

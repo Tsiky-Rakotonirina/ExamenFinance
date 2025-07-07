@@ -62,6 +62,12 @@ CREATE TABLE compte (
     FOREIGN KEY (status_compte_id) REFERENCES status_compte(id_status)
 );
 
+CREATE TABLE periode (
+    id_periode INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(100) NOT NULL,
+    nombre_mois INT NOT NULL,
+    libelle INT NOT NULL
+);
 -- Table : pret
 CREATE TABLE pret (
     id_pret INT AUTO_INCREMENT PRIMARY KEY,
@@ -70,15 +76,10 @@ CREATE TABLE pret (
     compte_id INT NOT NULL,
     montant DECIMAL(15,2) NOT NULL,
     duree INT NOT NULL,
+    periode_id INT NOT NULL,
     FOREIGN KEY (type_pret_id) REFERENCES type_pret(id_type_pret),
-    FOREIGN KEY (compte_id) REFERENCES compte(id_compte)
-);
-
-CREATE TABLE periode (
-    id_periode INT AUTO_INCREMENT PRIMARY KEY,
-    nom VARCHAR(100) NOT NULL,
-    nombre_mois INT NOT NULL,
-    libelle INT NOT NULL
+    FOREIGN KEY (compte_id) REFERENCES compte(id_compte),
+    FOREIGN KEY (periode_id) REFERENCES periode(id_periode)
 );
 
 
