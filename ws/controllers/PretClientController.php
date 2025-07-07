@@ -10,19 +10,6 @@ class PretClientController {
         Flight::json($result);
     }
 
-    // Modifier un prêt
-    public function modifierPret($id) {
-        $input = Flight::request()->data->getData();
-        $result = PretClientModel::modifierPret($id, $input);
-        Flight::json($result);
-    }
-
-    // Supprimer un prêt
-    public function supprimerPret($id) {
-        $result = PretClientModel::supprimerPret($id);
-        Flight::json($result);
-    }
-
     // Récupérer un prêt par ID
     public function getPret($id) {
         $result = PretClientModel::getPretById($id);

@@ -3,9 +3,7 @@ require_once __DIR__ . '/BaseModel.php';
 
 class PretClientModel extends BaseModel
 {
-    public static function ajouterPret($data)
-    {
-
+    public static function ajouterPret($data){
         $champsObligatoires = ['type_pret_id', 'montant', 'duree', 'compte_id', 'periode_id'];
         foreach ($champsObligatoires as $champ) {
             if (!isset($data[$champ]) || $data[$champ] === '') {
@@ -35,8 +33,7 @@ class PretClientModel extends BaseModel
             'duree' => $data['duree'],
             'compte_id' => $data['compte_id'],
             'periode_id' => $data['periode_id'],
-            'date_pret' => $data['date_pret'] ?? date('Y-m-d'),
-            'status_pret_id' => 1
+            'date_pret' => $data['date_pret'] ?? date('Y-m-d')
         ];
 
         $resultPret = self::insererDonnee('pret', $dataPret);

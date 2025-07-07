@@ -1,11 +1,4 @@
-<!-- Inclusion du CSS spécifique -->
-<link rel="stylesheet" href="<?=$url ?>/public/assets/css/gestionPret/index.css">
-
-<!-- Expose base_url pour JS -->
-<script>window.BASE_URL = "<?=$url?>";</script>
-
-<!-- Inclusion du JS spécifique -->
-<script src="<?=$url ?>/public/assets/js/gestionPret/index.js" defer></script>
+<script src="js/gestionPretClient.js" defer></script>
 
 <div class="gestion-pret-layout">
   <div class="col-gauche">
