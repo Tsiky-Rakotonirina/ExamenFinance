@@ -1,18 +1,16 @@
 <?php
-use app\controllers\Controller;
-use app\controllers\ProductController;
-
+use app\controllers\gestionPret\PretClientController;
 use flight\Engine;
 use flight\net\Router;
 
-$url=Flight::get('flight.base_url');
+$url = Flight::get('flight.base_url');
 
-$Controller=new Controller($url);
-$router->get('/', [ $Controller, 'index']);  
+$PretClientController = new PretClientController($url);
+$router->get('/', [ $PretClientController, 'index']);
+$router->get('/gestionPret/lister', [ $PretClientController, 'index']);
+$router->post('/gestionPret/ajouter', [ $PretClientController, 'ajouterPret']);
+$router->get('/gestionPret/{id}', [ $PretClientController, 'getPret']);
+$router->get('/gestionPret/listerTypesPret', [ $PretClientController, 'listerTypesPret' ]);
+$router->get('/gestionPret/listerComptes', [ $PretClientController, 'listerComptes' ]);
+$router->get('/gestionPret/api/lister', [ $PretClientController, 'listerPretsApi' ]);
 
-$ProductController=new ProductController($url);
-$router->get('/lister-produit', [ $ProductController, 'listerProduit']);  
-$router->get('/filtrer-produit', [ $ProductController, 'filtrerProduit']); 
-$router->post('/ajouter-produit', [ $ProductController, 'ajouterProduit']);  
-$router->post('/modifier-produit', [ $ProductController, 'modifierProduit']);  
-$router->get('/supprimer-produit', [ $ProductController, 'supprimerProduit']);  

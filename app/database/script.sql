@@ -2,7 +2,7 @@
 CREATE TABLE fond (
     id_fond INT AUTO_INCREMENT PRIMARY KEY,
     date_fond DATE NOT NULL,
-    valeur DECIMAL(15,2) NOT NULL
+    montant DECIMAL(15,2) NOT NULL
 );
 
 -- Table : status_type_pret
@@ -15,7 +15,7 @@ CREATE TABLE status_type_pret (
 CREATE TABLE type_pret (
     id_type_pret INT AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(100) NOT NULL,
-    date_type_pret DATE NOT NULL,
+    date_type_pret DATE NOT NULL DEFAULT CURRENT_DATE,
     status_type_pret_id INT NOT NULL,
     duree_max INT NOT NULL,
     montant_max DECIMAL(15,2) NOT NULL,
@@ -48,7 +48,6 @@ CREATE TABLE client (
 -- Table : status_compte
 CREATE TABLE status_compte (
     id_status INT AUTO_INCREMENT PRIMARY KEY,
-    compte VARCHAR(100) NOT NULL,
     nom VARCHAR(100) NOT NULL
 );
 
@@ -65,7 +64,7 @@ CREATE TABLE compte (
 -- Table : pret
 CREATE TABLE pret (
     id_pret INT AUTO_INCREMENT PRIMARY KEY,
-    date_pret DATE NOT NULL,
+    date_pret DATE NOT NULL DEFAULT CURRENT_DATE,
     type_pret_id INT NOT NULL,
     compte_id INT NOT NULL,
     montant DECIMAL(15,2) NOT NULL,
