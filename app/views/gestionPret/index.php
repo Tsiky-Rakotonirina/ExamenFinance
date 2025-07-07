@@ -73,6 +73,39 @@
                 <!-- Les prêts seront affichés ici par JS -->
             </tbody>
         </table>
+        
+        <!-- Pagination -->
+        <div class="pagination-container">
+            <div class="pagination-info">
+                <span id="pagination-info-text">Affichage de 0 à 0 sur 0 prêts</span>
+            </div>
+            <div class="pagination-controls">
+                <button type="button" id="pagination-first" class="pagination-btn">
+                    <i class="fas fa-angle-double-left"></i>
+                </button>
+                <button type="button" id="pagination-prev" class="pagination-btn">
+                    <i class="fas fa-angle-left"></i>
+                </button>
+                <div id="pagination-numbers" class="pagination-numbers">
+                    <!-- Les numéros de page seront générés ici -->
+                </div>
+                <button type="button" id="pagination-next" class="pagination-btn">
+                    <i class="fas fa-angle-right"></i>
+                </button>
+                <button type="button" id="pagination-last" class="pagination-btn">
+                    <i class="fas fa-angle-double-right"></i>
+                </button>
+            </div>
+            <div class="pagination-size">
+                <label for="pagination-size-select">Lignes par page :</label>
+                <select id="pagination-size-select" class="pagination-size-select">
+                    <option value="5">5</option>
+                    <option value="10" selected>10</option>
+                    <option value="20">20</option>
+                    <option value="50">50</option>
+                </select>
+            </div>
+        </div>
     </div>
     </div>
   </div>

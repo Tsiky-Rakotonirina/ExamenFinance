@@ -466,6 +466,121 @@ table tbody tr:hover {
     font-weight: bold;
 }
 
+/* -------------- PAGINATION -------------- */
+.pagination-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-lg);
+    background-color: var(--neutral-200);
+    border-top: 1px solid var(--neutral-300);
+    flex-wrap: wrap;
+    gap: var(--space-md);
+}
+
+.pagination-info {
+    font-size: 0.9rem;
+    color: var(--primary-dark);
+    font-weight: 500;
+}
+
+.pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+}
+
+.pagination-btn {
+    padding: var(--space-sm) var(--space-md);
+    border: 1px solid var(--neutral-400);
+    background-color: var(--neutral-100);
+    color: var(--primary-dark);
+    border-radius: var(--border-radius-sm);
+    cursor: pointer;
+    font-size: 0.9rem;
+    min-width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pagination-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: var(--neutral-300);
+}
+
+.pagination-btn.active {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+    font-weight: 600;
+}
+
+.pagination-numbers {
+    display: flex;
+    gap: var(--space-xs);
+}
+
+.pagination-size {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-size: 0.9rem;
+    color: var(--primary-dark);
+}
+
+.pagination-size-select {
+    padding: var(--space-sm) var(--space-md);
+    border: 1px solid var(--neutral-400);
+    border-radius: var(--border-radius-sm);
+    background-color: var(--neutral-100);
+    color: var(--primary-dark);
+    cursor: pointer;
+    min-width: 70px;
+}
+
+.pagination-size-select:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(74, 109, 167, 0.25);
+}
+
+/* Responsive pagination */
+@media (max-width: 768px) {
+    .pagination-container {
+        flex-direction: column;
+        align-items: center;
+        gap: var(--space-md);
+    }
+    
+    .pagination-controls {
+        order: 2;
+    }
+    
+    .pagination-info {
+        order: 1;
+    }
+    
+    .pagination-size {
+        order: 3;
+    }
+}
+
+@media (max-width: 480px) {
+    .pagination-btn {
+        min-width: 35px;
+        height: 35px;
+        font-size: 0.8rem;
+    }
+    
+    .pagination-numbers {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}
+
 /* -------------- RESPONSIVE -------------- */
 @media (max-width: 992px) {
     .gestion-pret-layout {
@@ -495,24 +610,5 @@ table tbody tr:hover {
         margin-left: 0;
         margin-top: var(--space-sm);
         width: 100%;
-    }
-}
-
-@media (max-width: 576px) {
-    .tri-buttons {
-        width: 100%;
-    }
-    
-    .btn-tri {
-        flex: 1;
-        text-align: center;
-    }
-    
-    .types-pret-container, .comptes-container {
-        grid-template-columns: 1fr;
-    }
-    
-    .filtre-actions {
-        flex-direction: column;
     }
 }
