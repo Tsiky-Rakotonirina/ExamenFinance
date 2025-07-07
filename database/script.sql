@@ -2,7 +2,7 @@
 CREATE TABLE fond (
     id_fond INT AUTO_INCREMENT PRIMARY KEY,
     date_fond DATE NOT NULL,
-    valeur DECIMAL(15,2) NOT NULL
+    montant DECIMAL(15,2) NOT NULL
 );
 
 -- Table : status_type_pret
@@ -15,11 +15,12 @@ CREATE TABLE status_type_pret (
 CREATE TABLE type_pret (
     id_type_pret INT AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(100) NOT NULL,
-    date_type_pret DATE NOT NULL,
+    date_type_pret DATE NOT NULL DEFAULT CURRENT_DATE,
     status_type_pret_id INT NOT NULL,
-    duree_max INT NOT NULL,
+    mois_max INT NOT NULL,
     montant_max DECIMAL(15,2) NOT NULL,
-    taux DECIMAL(5,2) NOT NULL,
+    taux_annuel DECIMAL(5,2) NOT NULL,
+    echeance_initiale INT NOT NULL,
     FOREIGN KEY (status_type_pret_id) REFERENCES status_type_pret(id_type_pret)
 );
 
@@ -48,7 +49,6 @@ CREATE TABLE client (
 -- Table : status_compte
 CREATE TABLE status_compte (
     id_status INT AUTO_INCREMENT PRIMARY KEY,
-    compte VARCHAR(100) NOT NULL,
     nom VARCHAR(100) NOT NULL
 );
 
@@ -65,7 +65,7 @@ CREATE TABLE compte (
 -- Table : pret
 CREATE TABLE pret (
     id_pret INT AUTO_INCREMENT PRIMARY KEY,
-    date_pret DATE NOT NULL,
+    date_pret DATE NOT NULL DEFAULT CURRENT_DATE,
     type_pret_id INT NOT NULL,
     compte_id INT NOT NULL,
     montant DECIMAL(15,2) NOT NULL,
@@ -73,3 +73,40 @@ CREATE TABLE pret (
     FOREIGN KEY (type_pret_id) REFERENCES type_pret(id_type_pret),
     FOREIGN KEY (compte_id) REFERENCES compte(id_compte)
 );
+
+CREATE TABLE periode (
+    id_periode INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(100) NOT NULL,
+    nombre_mois INT NOT NULL,
+    libelle INT NOT NULL
+);
+
+
+CREATE TABLE remboursement (
+    id_remboursement INT AUTO_INCREMENT PRIMARY KEY,
+    pret_id INT NOT NULL,
+    numero_periode INT NOT NULL,
+    base DECIMAL(15,2) NOT NULL,
+    interet DECIMAL(15,2) NOT NULL,
+    amortissement DECIMAL(15,2) NOT NULL,
+    a_payer DECIMAL(15,2) NOT NULL,
+    date_remboursement DATE,
+    date_echeance DATE NOT NULL,
+    FOREIGN KEY (pret_id) REFERENCES pret(id_pret)
+);
+
+-- Vue pour les types de prêt actifs
+CREATE OR REPLACE VIEW vue_type_pret_actif AS
+SELECT * FROM type_pret WHERE status_type_pret_id = 1;
+
+-- Vue pour les comptes avec infos client et status (seulement comptes actifs, sans solde)
+CREATE OR REPLACE VIEW vue_compte_detail AS
+SELECT c.id_compte, c.client_id, c.status_compte_id, cl.nom as client_nom, sc.nom as status_nom
+FROM compte c
+LEFT JOIN client cl ON c.client_id = cl.id_client
+LEFT JOIN status_compte sc ON c.status_compte_id = sc.id_status
+WHERE c.status_compte_id = 1;
+
+-- Vue pour les périodes (ordre croissant)
+CREATE OR REPLACE VIEW vue_periode AS
+SELECT * FROM periode ORDER BY nombre_mois ASC;
