@@ -1,28 +1,20 @@
 <?php
-
-namespace app\controllers\gestionFond;
-
-use Flight;
-use app\models\gestionFond\GestionFondModel;
+require_once __DIR__ . '/../models/GestionFondModel.php';
+require_once __DIR__ . '/../helpers/Utils.php';
 
 class GestionFondController{
-    protected $url;
-
-    public function __construct($url) {
-        $this->url = $url;
-    }
 
     public function filtrerFond() {
         $params = $_GET;
-        $fonds = Flight::GestionFondModel()->selectionnerDonnee('fond', $params);
-        $fondActuel = Flight::GestionFondModel()->fondActuel();
+        $fonds = GestionFondModel::selectionnerDonnee('fond', $params);
+        $fondActuel = GestionFondModel::fondActuel();
         $output = ['succes' => $fonds['succes'], 'message' => $fonds['message'], 'fonds' => $fonds['data'], 'fondActuel' => $fondActuel, ];
         Flight::json($output);
     }
 
     public function ajouterFond() {
         $input = Flight::request()->data->getData();
-        $output = Flight::GestionFondModel()->insererDonnee('fond', $input);
+        $output = GestionFondModel::insererDonnee('fond', $input);
         Flight::json($output);
     }
 

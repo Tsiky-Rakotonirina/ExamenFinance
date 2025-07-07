@@ -1,51 +1,31 @@
 <?php
+require_once __DIR__ . '/../models/GestionTypePretModel.php';
+require_once __DIR__ . '/../helpers/Utils.php';
 
-namespace app\controllers\gestionTypePret;
-
-use Flight;
-use app\models\gestionTypePret\GestionTypePretModel;
 
 class GestionTypePretController
 {
-    protected $url;
-    protected $typePretModel;
-
-    public function __construct($url)
-    {
-        $this->url = $url;
-    }
-
-    // public function index()
-    // {
-    //     // $data = ['folder'=>'', 'page'=>'', 'url'=>$this->url, ];
-    //     Flight::redirect("/list-type-pret");
-    // }
-    public function listerTypePret()
-    {
-        $data = ['folder' => '', 'page' => 'type-Pret', 'url' => $this->url];
-        Flight::render('gestionTypePret/index', $data);
-    }
     public function listerStatusTypePret()
     {
-        $output = Flight::GestionTypePretModel()->selectionnerDonnee('status_type_pret');
+        $output = GestionTypePretModel::selectionnerDonnee('status_type_pret');
         Flight::json($output);
     }
     public function historiqueTypePret()
     {
-        $output = Flight::GestionTypePretModel()->selectionnerDonnee('historique_type_pret');
+        $output = GestionTypePretModel::selectionnerDonnee('historique_type_pret');
         Flight::json($output);
     }
     public function filtrerTypePret()
     {
         $params = $_GET;
-        $output = Flight::GestionTypePretModel()->selectionnerDonnee('type_pret', $params);
+        $output = GestionTypePretModel::selectionnerDonnee('type_pret', $params);
         Flight::json($output);
     }
 
     public function ajouterTypePret()
     {
         $input = Flight::request()->data->getData();
-        $output = Flight::GestionTypePretModel()->insererDonnee('type_pret', $input);
+        $output = GestionTypePretModel::insererDonnee('type_pret', $input);
         Flight::json($output);
     }
 
@@ -60,7 +40,7 @@ class GestionTypePretController
         }
 
         // 1. Récupérer la ligne actuelle
-        $typePret = Flight::GestionTypePretModel()->selectionnerDonnee('type_pret', ['id_type_pret' => $id]);
+        $typePret = GestionTypePretModel::selectionnerDonnee('type_pret', ['id_type_pret' => $id]);
         if (empty($typePret['data'][0])) {
             Flight::json(['succes' => false, 'message' => 'Type de prêt introuvable']);
             return;
@@ -77,10 +57,10 @@ class GestionTypePretController
             'taux_annuel'            => $row['taux_annuel'],
             'echeance_initiale'            => $row['echeance_initiale'],
         ];
-        Flight::GestionTypePretModel()->insererDonnee('historique_type_pret', $historiqueData);
+        GestionTypePretModel::insererDonnee('historique_type_pret', $historiqueData);
 
         // 3. Faire l'UPDATE
-        $output = Flight::GestionTypePretModel()->modifierDonnee('type_pret', $input, ['id_type_pret' => $id]);
+        $output = GestionTypePretModel::modifierDonnee('type_pret', $input, ['id_type_pret' => $id]);
         Flight::json($output);
     }
 
@@ -91,7 +71,7 @@ class GestionTypePretController
             Flight::json(['succes' => false, 'message' => 'ID type prêt manquant']);
             return;
         }
-        $output = Flight::GestionTypePretModel()->supprimerDonnee('type_pret', ['id_type_pret' => $id]);
+        $output = GestionTypePretModel::supprimerDonnee('type_pret', ['id_type_pret' => $id]);
         Flight::json($output);
     }
 }

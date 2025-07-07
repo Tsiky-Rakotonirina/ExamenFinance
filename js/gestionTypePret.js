@@ -1,9 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
   const tbody = document.querySelector('#lister-type-pret tbody');
 
-
-
-
   // Fonction pour afficher la liste dans le tableau
   function afficherTypesPret(types) {
     tbody.innerHTML = '';

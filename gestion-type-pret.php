@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="css/index.css">
+<link rel="stylesheet" href="css/gestionTypePret.css">
 <script src="js/gestionTypePret.js"></script>
 
 <div class="main-container">
