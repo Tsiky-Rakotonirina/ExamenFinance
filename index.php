@@ -7,5 +7,6 @@
 </head>
 <body>
     <a href="template.php?page=statistique-interet">STATISTIQUES</a>
+    <a href="template.php?page=gestion-compte">GESTION FOND</a>
 </body>
 </html>
