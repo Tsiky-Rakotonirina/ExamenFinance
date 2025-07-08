@@ -103,12 +103,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 datasets: [{
                     label: 'Intérêts mensuels (€)',
                     data: interets,
-                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(125, 132, 113, 0.6)',
+                    borderColor: 'rgba(125, 132, 113, 1)',
                     borderWidth: 1
                 }]
             },
             options: {
+                responsive: true,
+                maintainAspectRatio: false,
                 scales: {
                     y: {
                         beginAtZero: true,
