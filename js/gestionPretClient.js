@@ -89,7 +89,6 @@ function afficherPrets(prets) {
     prets.forEach(pret => {
         const row = document.createElement('tr');
         
-        // Récupérer les noms des types et comptes depuis les données
         const typeName = pret.type_pret ? pret.type_pret.nom : `Type #${pret.type_pret_id}`;
         const compteName = pret.compte ? `${pret.compte.client.nom} - Compte #${pret.compte.id_compte}` : `Compte #${pret.compte_id}`;
         
@@ -120,7 +119,6 @@ document.querySelector('#lister-pret tbody').addEventListener('click', function 
     }
 });
 
-
 function afficherFichePret(id) {
     ajax('GET', `/gestionPret/fichePret/${id}`, null, data => {
         if (!data || !data.succes) {
@@ -135,13 +133,15 @@ function afficherFichePret(id) {
         const periode = pret.periode || {};
         const remboursements = pret.remboursements || [];
 
-        // Création HTML avec style moderne
         let ficheHTML = `
             <div class="fiche-overlay">
                 <div class="fiche-modal">
                     <div class="fiche-header">
                         <h3>Fiche du prêt #${pret.id_pret}</h3>
-                        <button class="btn-fermer-fiche" onclick="fermerFiche()">×</button>
+                        <div class="fiche-header-buttons">
+                            <button class="btn-exporter-pdf" onclick="exporterFicheEnPDF(${pret.id_pret})">Exporter en PDF</button>
+                            <button class="btn-fermer-fiche" onclick="fermerFiche()">×</button>
+                        </div>
                     </div>
                     <div class="fiche-content">
                         <div class="fiche-info">
@@ -155,30 +155,29 @@ function afficherFichePret(id) {
                             </div>
                             <div class="info-row">
                                 <span class="info-label">Date :</span>
-                                <span class="info-value">${pret.date_pret}</span>
+                                <span class="info-value">${pret.date_pret || 'N/A'}</span>
                             </div>
                             <div class="info-row">
                                 <span class="info-label">Type de prêt :</span>
-                                <span class="info-value">${typePret.nom} (${typePret.taux_annuel}% taux)</span>
+                                <span class="info-value">${typePret.nom || 'N/A'} (${typePret.taux_annuel || '0'}% taux)</span>
                             </div>
                             <div class="info-row">
                                 <span class="info-label">Période :</span>
-                                <span class="info-value">${periode.nom} (${periode.nombre_mois} mois)</span>
+                                <span class="info-value">${periode.nom || 'N/A'} (${periode.nombre_mois || '0'} mois)</span>
                             </div>
                             <div class="info-row">
                                 <span class="info-label">Durée :</span>
-                                <span class="info-value">${pret.duree}</span>
+                                <span class="info-value">${pret.duree || 'N/A'}</span>
                             </div>
                             <div class="info-row">
                                 <span class="info-label">Pourcentage assurance :</span>
-                                <span class="info-value">${pret.pourcentage_assurance} %</span>
+                                <span class="info-value">${pret.pourcentage_assurance || '0'} %</span>
                             </div>
                             <div class="info-row">
                                 <span class="info-label">Montant :</span>
-                                <span class="info-value montant-principal">${parseFloat(pret.montant).toLocaleString('fr-FR', { minimumFractionDigits: 2 })} €</span>
+                                <span class="info-value montant-principal">${parseFloat(pret.montant || 0).toLocaleString('fr-FR', { minimumFractionDigits: 2 })} €</span>
                             </div>
                         </div>
-                        
                         <div class="fiche-remboursements">
                             <h4>Remboursements (${periode.libelle || 'Mensualité'}) :</h4>
                             <div class="table-container-fiche">
@@ -198,15 +197,17 @@ function afficherFichePret(id) {
         `;
 
         remboursements.forEach(r => {
+            const mensualite = r.mensualite ? parseFloat(r.mensualite).toFixed(2) : parseFloat(r.a_payer || 0).toFixed(2);
+            const assurance = r.assurance ? parseFloat(r.assurance).toFixed(2) : '0.00';
             ficheHTML += `
                 <tr>
-                    <td>${r.periode_label}</td>
-                    <td class="montant">${parseFloat(r.base).toFixed(2)} €</td>
-                    <td class="montant">${parseFloat(r.interet).toFixed(2)} €</td>
-                    <td class="montant">${parseFloat(r.amortissement).toFixed(2)} €</td>
-                    <td class="montant mensualite">${parseFloat(r.mensualite).toFixed(2)} €</td>
-                    <td class="montant mensualite">${parseFloat(r.assurance).toFixed(2)} €</td>
-                    <td class="montant mensualite">${parseFloat(r.a_payer).toFixed(2)} €</td>
+                    <td>${r.periode_label || 'N/A'}</td>
+                    <td class="montant">${parseFloat(r.base || 0).toFixed(2)} €</td>
+                    <td class="montant">${parseFloat(r.interet || 0).toFixed(2)} €</td>
+                    <td class="montant">${parseFloat(r.amortissement || 0).toFixed(2)} €</td>
+                    <td class="montant mensualite">${mensualite} €</td>
+                    <td class="montant mensualite">${assurance} €</td>
+                    <td class="montant mensualite">${parseFloat(r.a_payer || 0).toFixed(2)} €</td>
                 </tr>
             `;
         });
@@ -221,7 +222,6 @@ function afficherFichePret(id) {
             </div>
         `;
 
-        // Créer ou mettre à jour le conteneur flottant
         let container = document.getElementById('fiche-pret-container');
         if (!container) {
             container = document.createElement('div');
@@ -231,13 +231,100 @@ function afficherFichePret(id) {
         
         container.innerHTML = ficheHTML;
         container.classList.add('fiche-visible');
-        
-        // Empêcher le scroll du body
         document.body.style.overflow = 'hidden';
     });
 }
+function exporterFicheEnPDF(pretId) {
+    ajax('GET', `/gestionPret/fichePret/${pretId}`, null, data => {
+        if (!data || !data.succes) {
+            alert("Erreur lors de la récupération des données du prêt pour l'exportation.");
+            return;
+        }
 
-// Fonction pour fermer la fiche
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        
+        const pret = data.data;
+        const compte = pret.compte || {};
+        const client = compte.client || {};
+        const typePret = pret.type_pret || {};
+        const periode = pret.periode || {};
+        const remboursements = pret.remboursements || [];
+
+        let y = 20;
+        
+        // Titre
+        doc.setFontSize(16);
+        doc.text(`Fiche du prêt #${pret.id_pret}`, 20, y);
+        y += 20;
+
+        // Informations du prêt
+        doc.setFontSize(12);
+        doc.text(`Client : ${client.nom || 'N/A'}`, 20, y);
+        y += 10;
+        doc.text(`Compte : #${compte.id_compte || 'N/A'}`, 20, y);
+        y += 10;
+        doc.text(`Date : ${pret.date_pret || 'N/A'}`, 20, y);
+        y += 10;
+        doc.text(`Type de prêt : ${typePret.nom || 'N/A'} (${typePret.taux_annuel || '0'}% taux)`, 20, y);
+        y += 10;
+        doc.text(`Période : ${periode.nom || 'N/A'} (${periode.nombre_mois || '0'} mois)`, 20, y);
+        y += 10;
+        doc.text(`Durée : ${pret.duree || 'N/A'}`, 20, y);
+        y += 10;
+        doc.text(`Pourcentage assurance : ${pret.pourcentage_assurance || '0'} %`, 20, y);
+        y += 10;
+        doc.text(`Montant : ${parseFloat(pret.montant || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, " ")} €`, 20, y);
+        y += 20;
+
+        // Tableau des remboursements
+        doc.text(`Remboursements (${periode.libelle || 'Mensualité'}) :`, 20, y);
+        y += 15;
+
+        // En-tête du tableau
+        const headers = ['Période', 'Base', 'Intérêt', 'Amortissement', 'Mensualité', 'Assurance', 'A Payer'];
+        let x = 20;
+        const colWidths = [25, 25, 25, 30, 25, 25, 25];
+        
+        headers.forEach((header, i) => {
+            doc.text(header, x, y);
+            x += colWidths[i];
+        });
+        y += 10;
+
+        // Lignes du tableau
+        remboursements.forEach((r, index) => {
+            const mensualite = r.mensualite ? parseFloat(r.mensualite).toFixed(2) : parseFloat(r.a_payer || 0).toFixed(2);
+            const assurance = r.assurance ? parseFloat(r.assurance).toFixed(2) : '0.00';
+            
+            const row = [
+                r.periode_label || 'N/A',
+                `${parseFloat(r.base || 0).toFixed(2)}`,
+                `${parseFloat(r.interet || 0).toFixed(2)}`,
+                `${parseFloat(r.amortissement || 0).toFixed(2)}`,
+                `${mensualite}`,
+                `${assurance}`,
+                `${parseFloat(r.a_payer || 0).toFixed(2)}`
+            ];
+            
+            x = 20;
+            row.forEach((cell, i) => {
+                doc.text(cell, x, y);
+                x += colWidths[i];
+            });
+            y += 8;
+            
+            // Nouvelle page si nécessaire
+            if (y > 270) {
+                doc.addPage();
+                y = 20;
+            }
+        });
+
+        // Sauvegarder le PDF
+        doc.save(`fiche_pret_${pret.id_pret}.pdf`);
+    });
+}
 function fermerFiche() {
     const container = document.getElementById('fiche-pret-container');
     if (container) {
@@ -269,9 +356,22 @@ function ajouterPret() {
     });
 }
 
-
 function filtrerPrets() {
-    chargerPrets();
+    const form = document.getElementById('filtre-prets');
+    const formData = new FormData(form);
+    const params = new URLSearchParams();
+
+    for (const [key, value] of formData.entries()) {
+        if (value) params.append(key, value);
+    }
+
+    ajax('GET', '/gestionPret/api/lister?' + params.toString(), null, data => {
+        if (data.succes) {
+            afficherPrets(data.data);
+        } else {
+            alert('Erreur lors du filtrage des prêts: ' + data.message);
+        }
+    });
 }
 
 function trierPrets(colonne, direction) {
@@ -290,7 +390,7 @@ function trierPrets(colonne, direction) {
                 break;
             case 'duree':
                 valA = parseInt(a.cells[5].textContent);
-                valB = parseInt(b.cells[5].textContent);
+                valB = parseInt(a.cells[5].textContent);
                 break;
             default:
                 valA = a.cells[0].textContent;
@@ -390,14 +490,12 @@ function escapeHtml(text) {
     return text.replace(/[&<>"']/g, function(m) { return map[m]; });
 }
 
-// Gestion de la fermeture par clic sur l'overlay
 document.addEventListener('click', function(e) {
     if (e.target && e.target.classList.contains('fiche-overlay')) {
         fermerFiche();
     }
 });
 
-// Gestion de la fermeture par touche Escape
 document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
         fermerFiche();

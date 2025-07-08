@@ -12,11 +12,9 @@
 <body>
     <div class="container">
         <h1>Statistiques des Intérêts</h1>
-
         <div class="content-wrapper">
             <div class="filters-section">
                 <h2>Filtres de Période</h2>
-
                 <div class="filter-group">
                     <h3 style="color: var(--primary-color); font-size: 1rem; margin-bottom: 1rem;">Période de début</h3>
                     <div class="filter-row">
@@ -43,7 +41,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="filter-group">
                     <h3 style="color: var(--primary-color); font-size: 1rem; margin-bottom: 1rem;">Période de fin</h3>
                     <div class="filter-row">
@@ -70,10 +67,8 @@
                         </div>
                     </div>
                 </div>
-
                 <button id="btn-filtrer-statistiques">Filtrer les Statistiques</button>
             </div>
-
             <div class="chart-section">
                 <h2>Graphique des Intérêts</h2>
                 <div class="chart-container">
@@ -81,8 +76,21 @@
                 </div>
             </div>
         </div>
+        <div class="table-container">
+            <h2>Détails des Intérêts</h2>
+            <table id="interetsTable" style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: var(--primary-color); color: var(--white);">
+                        <th style="padding: 0.7rem; border: 1px solid var(--border-color);">Mois</th>
+                        <th style="padding: 0.7rem; border: 1px solid var(--border-color);">Intérêts (€)</th>
+                    </tr>
+                </thead>
+                <tbody id="interetsTableBody">
+                    <!-- Les données seront insérées par JavaScript -->
+                </tbody>
+            </table>
+        </div>
     </div>
-
     <script src="js/statistique-interet.js"></script>
 </body>
 
