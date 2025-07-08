@@ -1,0 +1,650 @@
+/* 
+ * ExamenFinance - CSS pour la gestion des prêts clients
+ * Design moderne et ergonomique avec thème vert kaki
+ */
+
+/* -------------- VARIABLES -------------- */
+:root {
+    /* Palette de couleurs principale - Thème vert kaki */
+    --primary-color: #7d8471;      /* Vert kaki principal */
+    --primary-light: #d4d9d0;      /* Vert kaki très clair */
+    --primary-dark: #5a6b47;       /* Vert kaki foncé */
+    
+    /* Couleurs secondaires */
+    --secondary-color: #9ca986;    /* Vert kaki clair */
+    --secondary-light: #e8ebe6;    /* Vert kaki très pâle */
+    --secondary-dark: #6b7a5a;     /* Vert kaki moyen foncé */
+    
+    /* Couleurs neutres */
+    --neutral-100: #ffffff;
+    --neutral-200: #f8f9f7;        /* Blanc cassé */
+    --neutral-300: #d4d9d0;        /* Bordures */
+    --neutral-400: #b8c2b3;        /* Bordures foncées */
+    --neutral-500: #8c98a4;
+    
+    /* Couleurs d'accentuation adaptées au thème vert */
+    --accent-blue-light: #e6f0e6;      /* Vert très pâle pour bleu */
+    --accent-orange-light: #f2f5f0;    /* Vert cassé pour orange */
+    --accent-green-light: #e8f5e8;     /* Vert pâle */
+    --accent-money-light: #e3f2e3;     /* Vert pâle pour le montant */
+    --accent-account-light: #f0f5f0;   /* Vert très pâle pour les comptes */
+    --accent-loan-type-light: #eaedef; /* Gris-vert pour les types de prêt */
+    --accent-period-light: #f5f7f2;    /* Vert très pâle pour période/durée */
+    
+    /* Couleurs de texte */
+    --text-dark: #2c3e2d;          /* Texte principal */
+    --text-medium: #5a6b47;        /* Texte secondaire */
+    --text-light: #7d8471;         /* Texte tertiaire */
+    
+    /* Espacement */
+    --space-xs: 0.25rem;
+    --space-sm: 0.5rem;
+    --space-md: 1rem;
+    --space-lg: 1.5rem;
+    --space-xl: 2rem;
+    
+    /* Bordures et ombres */
+    --border-radius-sm: 0.25rem;
+    --border-radius-md: 0.5rem;
+    --box-shadow-sm: 0 2px 4px rgba(125, 132, 113, 0.1);
+    --box-shadow-md: 0 4px 8px rgba(125, 132, 113, 0.15);
+    --shadow-light: 0 2px 8px rgba(125, 132, 113, 0.1);
+}
+
+/* -------------- LAYOUT PRINCIPAL -------------- */
+.gestion-pret-layout {
+    display: flex;
+    gap: var(--space-xl);
+    padding: var(--space-md);
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Colonnes principales */
+.col-gauche, .col-droite {
+    flex: 1;
+    min-width: 0; /* Pour éviter le débordement sur petits écrans */
+}
+
+.col-gauche {
+    flex: 3; /* La colonne gauche prend plus d'espace */
+}
+
+.col-droite {
+    flex: 2;
+}
+
+/* Zones de contenu */
+.content-zone {
+    background-color: var(--neutral-100);
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--box-shadow-sm);
+    padding: var(--space-lg);
+    margin-bottom: var(--space-lg);
+    border: 1px solid var(--neutral-300);
+}
+
+/* Titres des sections */
+.gestion-pret-layout h2 {
+    color: var(--text-dark);
+    font-size: 1.4rem;
+    margin-bottom: var(--space-md);
+    padding-bottom: var(--space-xs);
+    border-bottom: 2px solid var(--primary-light);
+}
+
+/* -------------- FORMULAIRES -------------- */
+.form-group {
+    margin-bottom: var(--space-md);
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: var(--space-xs);
+    font-weight: 500;
+    color: var(--text-dark);
+}
+
+.form-group input, 
+.form-group select {
+    width: 100%;
+    padding: 0.6rem 0.75rem;
+    font-size: 0.95rem;
+    border: 1px solid var(--neutral-400);
+    border-radius: var(--border-radius-sm);
+    background-color: var(--neutral-100);
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group input:focus, 
+.form-group select:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(125, 132, 113, 0.25);
+}
+
+/* Sections colorées dans le formulaire */
+.form-group.bg-blue {
+    background: var(--accent-blue-light);
+    padding: var(--space-md);
+    border-radius: var(--border-radius-sm);
+    margin-bottom: var(--space-md);
+}
+
+.form-group.bg-loan-type {
+    background: var(--accent-loan-type-light);
+    padding: var(--space-md);
+    border-radius: var(--border-radius-sm);
+    margin-bottom: var(--space-md);
+    border-left: 3px solid var(--secondary-dark); /* Bordure vert kaki */
+}
+
+.form-group.bg-period {
+    background: var(--accent-period-light);
+    padding: var(--space-md);
+    border-radius: var(--border-radius-sm);
+    margin-bottom: var(--space-md);
+    border-left: 3px solid var(--primary-color); /* Bordure vert kaki principal */
+}
+
+.form-group.bg-green {
+    background: var(--accent-green-light);
+    padding: var(--space-md);
+    border-radius: var(--border-radius-sm);
+    margin-bottom: var(--space-md);
+}
+
+.form-group.bg-account {
+    background: var(--accent-account-light);
+    padding: var(--space-md);
+    border-radius: var(--border-radius-sm);
+    margin-bottom: var(--space-md);
+    border-left: 3px solid var(--primary-dark); /* Bordure vert kaki foncé */
+}
+
+.form-group.bg-money {
+    background: var(--accent-money-light);
+    padding: var(--space-md);
+    border-radius: var(--border-radius-sm);
+    margin-bottom: var(--space-md);
+    border-left: 3px solid var(--accent-color); /* Bordure vert kaki accent */
+}
+
+/* Disposition en ligne */
+.form-row {
+    display: flex;
+    gap: var(--space-md);
+    margin-bottom: var(--space-md);
+    align-items: stretch; /* Assure que les éléments ont la même hauteur */
+}
+
+.form-row .form-group {
+    flex: 1;
+    margin-bottom: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* S'assurer que les inputs dans form-row prennent toute la hauteur disponible */
+.form-row .form-group input,
+.form-row .form-group select {
+    flex: 1;
+    min-height: 2.8rem; /* Hauteur minimale consistante plus grande */
+    padding: 0.6rem 0.75rem;
+    font-size: 0.95rem;
+}
+
+/* Labels dans form-row avec espacement uniforme */
+.form-row .form-group label {
+    margin-bottom: var(--space-sm);
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    white-space: nowrap;
+    min-height: 1.2rem; /* Hauteur minimale pour les labels */
+}
+
+/* -------------- BOUTONS -------------- */
+button {
+    padding: 0.6rem 1rem;
+    border: none;
+    border-radius: var(--border-radius-sm);
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+}
+
+/* Style de bouton primaire - pour actions principales */
+.btn-primary, button[type="submit"], #btn-ajouter-pret {
+    background-color: var(--primary-color);
+    color: white;
+    border: 1px solid var(--primary-dark);
+}
+
+.btn-primary:hover, button[type="submit"]:hover, #btn-ajouter-pret:hover {
+    background-color: var(--primary-dark);
+    box-shadow: var(--box-shadow-sm);
+}
+
+/* Style de bouton secondaire - pour actions secondaires */
+.btn-secondary, button[type="button"], .btn-tri {
+    background-color: var(--secondary-light);
+    color: var(--text-dark);
+    border: 1px solid var(--neutral-400);
+}
+
+.btn-secondary:hover, button[type="button"]:hover, .btn-tri:hover {
+    background-color: var(--neutral-300);
+}
+
+/* Bouton submit du formulaire d'ajout */
+#btn-ajouter-pret {
+    width: 100%;
+    margin-top: var(--space-md);
+    padding: 0.75rem;
+    font-size: 1rem;
+}
+
+.filtre-actions {
+    display: flex;
+    gap: var(--space-sm);
+    margin-top: var(--space-md);
+}
+
+.filtre-actions button {
+    flex: 1;
+}
+
+/* -------------- TRI -------------- */
+.tri-container {
+    background-color: var(--secondary-light); /* Vert kaki clair pour le fond */
+    padding: var(--space-md);
+    border-radius: var(--border-radius-sm);
+    margin: var(--space-md) 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-sm);
+    border-left: 4px solid var(--primary-color);
+}
+
+.tri-container span {
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-right: var(--space-sm);
+    font-size: 1.05rem;
+}
+
+/* Tri buttons */
+.tri-buttons {
+    display: flex;
+    gap: var(--space-xs);
+    flex-wrap: wrap;
+}
+
+.btn-tri {
+    padding: 0.5rem 1rem;
+    transition: all 0.2s ease;
+    background-color: var(--primary-color); /* Vert kaki principal */
+    color: white;
+    border: none;
+    border-radius: var(--border-radius-sm);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    min-width: 90px;
+    box-shadow: 0 2px 4px rgba(125, 132, 113, 0.2);
+}
+
+.btn-tri:hover {
+    background-color: var(--secondary-dark); /* Vert kaki moyen foncé au survol */
+    box-shadow: 0 3px 6px rgba(125, 132, 113, 0.25);
+}
+
+.btn-tri.active {
+    background-color: var(--primary-dark); /* Vert kaki foncé */
+    position: relative;
+    transform: translateY(0);
+    box-shadow: inset 0 2px 3px rgba(0,0,0,0.2); /* Ombre intérieure */
+    color: white; /* Texte en blanc */
+    font-weight: 700; /* Texte en gras pour plus de lisibilité */
+}
+
+/* Indicateur visuel pour bouton actif */
+.btn-tri.active::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 70%;
+    height: 3px;
+    background-color: #fff;
+    border-radius: 2px;
+}
+
+.tri-direction-group {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+}
+
+.tri-direction-group label {
+    font-weight: 500;
+    color: var(--text-dark);
+    margin-bottom: 0;
+}
+
+.tri-direction-group select {
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--border-radius-sm);
+    border: 1px solid var(--neutral-400);
+    background-color: var(--neutral-100);
+    color: var(--text-dark);
+    font-weight: 500;
+    min-width: 120px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+}
+
+.tri-direction-group select:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(125, 132, 113, 0.25);
+}
+
+.tri-direction-group select:hover {
+    border-color: var(--primary-color);
+}
+
+/* -------------- TABLEAUX -------------- */
+.table-container {
+    overflow-x: auto;
+    margin-top: var(--space-md);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+}
+
+table th {
+    background-color: var(--primary-dark);
+    color: white;
+    text-align: left;
+    padding: 0.75rem var(--space-md);
+    font-weight: 600;
+}
+
+table td {
+    padding: 0.75rem var(--space-md);
+    border-bottom: 1px solid var(--neutral-300);
+}
+
+table tbody tr:nth-child(even) {
+    background-color: var(--neutral-200);
+}
+
+table tbody tr:hover {
+    background-color: var(--primary-light);
+}
+
+/* Types de prêt et comptes (conteneurs de radio/checkbox) */
+.types-pret-container, .comptes-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--space-md);
+    margin-top: var(--space-sm);
+}
+
+.type-pret-option, .compte-option {
+    background-color: var(--neutral-100);
+    border: 1px solid var(--neutral-300);
+    border-radius: var(--border-radius-sm);
+    padding: var(--space-sm);
+    box-shadow: var(--box-shadow-sm);
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+}
+
+.type-pret-option:hover, .compte-option:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--box-shadow-md);
+    border-color: var(--primary-color);
+}
+
+/* Cacher les inputs radio mais garder l'accessibilité */
+.type-pret-option input[type="radio"],
+.compte-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+}
+
+/* Styles pour les labels */
+.type-pret-label, .compte-label {
+    display: block;
+    cursor: pointer;
+    width: 100%;
+}
+
+/* Style pour les en-têtes des options */
+.type-pret-header, .compte-header {
+    font-size: 1.1rem;
+    color: var(--text-dark);
+    margin-bottom: var(--space-xs);
+    padding-bottom: var(--space-xs);
+    border-bottom: 1px solid var(--neutral-300);
+}
+
+/* Style pour les détails des options */
+.type-pret-details, .compte-details {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    font-size: 0.9rem;
+    color: var(--text-medium);
+}
+
+/* Style pour les options sélectionnées */
+.type-pret-option input[type="radio"]:checked + .type-pret-label,
+.compte-option input[type="radio"]:checked + .compte-label {
+    background-color: var(--primary-light);
+    padding: var(--space-xs);
+    border-radius: var(--border-radius-sm);
+}
+
+.type-pret-option input[type="radio"]:checked + .type-pret-label .type-pret-header,
+.compte-option input[type="radio"]:checked + .compte-label .compte-header {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+/* Indicateur visuel pour option sélectionnée */
+.type-pret-option input[type="radio"]:checked + .type-pret-label::before,
+.compte-option input[type="radio"]:checked + .compte-label::before {
+    content: '✓';
+    position: absolute;
+    top: var(--space-xs);
+    right: var(--space-xs);
+    color: var(--primary-color);
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+/* -------------- PAGINATION -------------- */
+.pagination-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-lg);
+    background-color: var(--neutral-200);
+    border-top: 1px solid var(--neutral-300);
+    flex-wrap: wrap;
+    gap: var(--space-md);
+}
+
+.pagination-info {
+    font-size: 0.9rem;
+    color: var(--text-dark);
+    font-weight: 500;
+}
+
+.pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+}
+
+.pagination-btn {
+    padding: var(--space-sm) var(--space-md);
+    border: 1px solid var(--neutral-400);
+    background-color: var(--neutral-100);
+    color: var(--text-dark);
+    border-radius: var(--border-radius-sm);
+    cursor: pointer;
+    font-size: 0.9rem;
+    min-width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pagination-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: var(--neutral-300);
+}
+
+.pagination-btn.active {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+    font-weight: 600;
+}
+
+.pagination-numbers {
+    display: flex;
+    gap: var(--space-xs);
+}
+
+.pagination-size {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-size: 0.9rem;
+    color: var(--text-dark);
+}
+
+.pagination-size-select {
+    padding: var(--space-sm) var(--space-md);
+    border: 1px solid var(--neutral-400);
+    border-radius: var(--border-radius-sm);
+    background-color: var(--neutral-100);
+    color: var(--text-dark);
+    cursor: pointer;
+    min-width: 70px;
+}
+
+.pagination-size-select:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(125, 132, 113, 0.25);
+}
+
+/* Responsive pagination */
+@media (max-width: 768px) {
+    .pagination-container {
+        flex-direction: column;
+        align-items: center;
+        gap: var(--space-md);
+    }
+    
+    .pagination-controls {
+        order: 2;
+    }
+    
+    .pagination-info {
+        order: 1;
+    }
+    
+    .pagination-size {
+        order: 3;
+    }
+}
+
+@media (max-width: 480px) {
+    .pagination-btn {
+        min-width: 35px;
+        height: 35px;
+        font-size: 0.8rem;
+    }
+    
+    .pagination-numbers {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}
+
+/* -------------- RESPONSIVE -------------- */
+@media (max-width: 992px) {
+    .gestion-pret-layout {
+        flex-direction: column;
+    }
+    
+    .col-gauche, .col-droite {
+        flex: none;
+        width: 100%;
+    }
+    
+    .form-row {
+        flex-direction: column;
+        gap: var(--space-md);
+    }
+    
+    .form-row .form-group {
+        width: 100%;
+    }
+    
+    .tri-container {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .tri-direction-group {
+        margin-left: 0;
+        margin-top: var(--space-sm);
+        width: 100%;
+    }
+}
+
+/* -------------- STYLES SPÉCIFIQUES -------------- */
+
+/* Reset et styles de base */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-dark);
+    line-height: 1.6;
+}
+
+/* Conteneur principal */
+.main-container {
+    padding: 20px;
+}
+
+/* Titre principal */
+h1 {
+    text-align: center;
+    color: var(--primary-color);
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+}

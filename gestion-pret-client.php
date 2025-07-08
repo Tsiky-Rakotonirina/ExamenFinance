@@ -1,4 +1,5 @@
 <script src="js/gestionPretClient.js" defer></script>
+<link rel="stylesheet" href="css/gestionPretClient.css">
 
 <div class="gestion-pret-layout">
   <div class="col-gauche">
