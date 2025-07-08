@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/BaseModel.php';
 
-class PretClientModel extends BaseModel
+class SimulerPretModel extends BaseModel
 {
     public static function genererTableauMensualiteConstantes($capitalInitial, $tauxAnnuel, $duree, $nbMoisParPeriode, $assurance)
     {
@@ -60,7 +60,7 @@ class PretClientModel extends BaseModel
         foreach ($champsRemb as $champ) {
             if (array_key_exists($champ, $data)) $dataRemb[$champ] = $data[$champ];
         }
-        $result = self::insererDonnee('remboursement', $dataRemb);
+        $result = self::insererDonnee('simulation_remboursement', $dataRemb);
         if (!$result['succes']) {
             error_log('[Remboursement] Erreur insertion: ' . ($result['message'] ?? 'Erreur inconnue') . ' | Data: ' . json_encode($dataRemb));
         }
@@ -105,7 +105,7 @@ class PretClientModel extends BaseModel
             'pourcentage_assurance' => $data['pourcentage_assurance']
         ];
 
-        $resultPret = self::insererDonnee('pret', $dataPret);
+        $resultPret = self::insererDonnee('simulation_pret', $dataPret);
 
         $pretId = $resultPret['lastInsertId'];
         
@@ -143,18 +143,150 @@ class PretClientModel extends BaseModel
         return $resultPret;
     }
 
+    public static function genererTableauMensualiteConstantesPret($capitalInitial, $tauxAnnuel, $duree, $nbMoisParPeriode, $assurance)
+    {
+        // Calculer le nombre total de mois (durée * nbMoisParPeriode)
+        $nbMoisTotal = $duree * $nbMoisParPeriode;
+
+        // Taux mensuel pour le calcul de la mensualité
+        $tauxMensuel = $tauxAnnuel / 12;
+        $i = $tauxMensuel / 100;
+
+        // Calcul de la mensualité constante
+        $mensualite = ($capitalInitial * $i) / (1 - pow(1 + $i, -$nbMoisTotal));
+        $mensualite = round($mensualite, 2); // arrondi à 2 chiffres après la virgule
+
+        $resultat = [];
+        $capitalRestant = $capitalInitial;
+
+        // Générer le tableau pour chaque mois
+        for ($mois = 1; $mois <= $nbMoisTotal; $mois++) {
+            $capitalDebut = round($capitalRestant, 2);
+            $interet = round($capitalDebut * $i, 2);
+            $amortissement = round($mensualite - $interet, 2);
+            $capitalRestant = round($capitalRestant - $amortissement, 2);
+            
+            $resultat[] = [
+                'mois' => $mois,
+                'capital_debut' => $capitalDebut,
+                'interet' => $interet,
+                'amortissement' => $amortissement,
+                'capital_fin' => $capitalRestant,
+                'mensualite' => $mensualite, 
+                'assurance' => $assurance,
+                'a_payer' => $assurance + $mensualite 
+            ];
+        }
+
+        return $resultat;
+    }
+
+    public static function ajouterRemboursementPret($data) {
+        // Champs obligatoires pour la table remboursement
+        $champsObligatoires = ['pret_id', 'numero_periode', 'base', 'interet', 'amortissement','assurance','mensualite', 'a_payer', 'date_echeance'];
+        foreach ($champsObligatoires as $champ) {
+            if (!isset($data[$champ]) || $data[$champ] === '' || $data[$champ] === null) {
+                $msg = "[Remboursement] Champ obligatoire manquant ou vide : $champ | Data: " . json_encode($data);
+                error_log($msg);
+                return [
+                    'succes' => false,
+                    'message' => $msg
+                ];
+            }
+        }
+        // On ne garde que les champs attendus pour la table remboursement
+        $champsRemb = ['pret_id', 'numero_periode', 'base', 'interet', 'amortissement', 'assurance', 'mensualite', 'a_payer', 'date_remboursement', 'date_echeance'];
+        $dataRemb = [];
+        foreach ($champsRemb as $champ) {
+            if (array_key_exists($champ, $data)) $dataRemb[$champ] = $data[$champ];
+        }
+        $result = self::insererDonnee('remboursement', $dataRemb);
+        if (!$result['succes']) {
+            error_log('[Remboursement] Erreur insertion: ' . ($result['message'] ?? 'Erreur inconnue') . ' | Data: ' . json_encode($dataRemb));
+        }
+        return $result;
+    }
+
+    public static function ajouterPretPret($data){
+        $champsObligatoires = ['id_simulation_pret','type_pret_id', 'montant', 'duree', 'compte_id', 'periode_id','pourcentage_assurance'];
+        foreach ($champsObligatoires as $champ) {
+            if (!isset($data[$champ]) || $data[$champ] === '') {
+                return ['succes' => false, 'message' => "Champ obligatoire manquant ou vide : $champ"];
+            }
+        }
+
+        $typePret = self::chercherDonnee('type_pret', ['id_type_pret' => $data['type_pret_id']]);
+        if (empty($typePret['data'][0])) {
+            return ['succes' => false, 'message' => 'Type de prêt introuvable.'];
+        }
+        $type = $typePret['data'][0];
+
+        $periodeInfo = self::chercherDonnee('periode', ['id_periode' => $data['periode_id']]);
+        if (empty($periodeInfo['data'][0])) {
+            return ['succes' => false, 'message' => 'Période invalide.'];
+        }
+        $nbMoisParPeriode = $periodeInfo['data'][0]['nombre_mois'];
+
+        // Validation des limites basée sur le nombre total de mois
+        $nbMoisTotal = $data['duree'] * $nbMoisParPeriode;
+        if ($data['montant'] > $type['montant_max'] || $nbMoisTotal > $type['mois_max']) {
+            return ['succes' => false, 'message' => 'Montant ou durée dépasse les limites autorisées.'];
+        }
+
+        $assurance = round($data['montant'] * ($data['pourcentage_assurance'] / 100), 2);
+
+        $dataPret = [
+            'type_pret_id' => $data['type_pret_id'],
+            'montant' => $data['montant'],
+            'duree' => $data['duree'],
+            'compte_id' => $data['compte_id'],
+            'periode_id' => $data['periode_id'],
+            'date_pret' => $data['date_pret'] ?? date('Y-m-d'),
+            'pourcentage_assurance' => $data['pourcentage_assurance']
+        ];
+
+        $resultPret = self::insererDonnee('pret', $dataPret);
+
+        $pretId = $resultPret['lastInsertId'];
+        
+        $resultPret = self::insererDonnee('valider_simulation', ['simulation_pret_id'=>$data['id_simulation_pret'], 'pret_id' => $pretId, ]);
+        // Générer le tableau des mensualités
+        $tableau = self::genererTableauMensualiteConstantesPret(
+            $data['montant'],
+            $type['taux_annuel'],
+            $data['duree'],
+            $nbMoisParPeriode,
+            $assurance
+        );
+
+        // Calculer la première date d'échéance : date du prêt + echeance_initiale mois
+        $dateEcheance = new DateTime($dataPret['date_pret']);
+        $dateEcheance->modify('+' . $type['echeance_initiale'] . ' months');
+
+        // Insérer chaque ligne du tableau dans la base
+        foreach ($tableau as $ligne) {
+            self::ajouterRemboursementPret([
+                'pret_id' => $pretId,
+                'numero_periode' => $ligne['mois'],
+                'base' => $ligne['capital_debut'],
+                'interet' => $ligne['interet'],
+                'amortissement' => $ligne['amortissement'],
+                'assurance' => $ligne['assurance'],
+                'mensualite' => $ligne['mensualite'],
+                'a_payer' => $ligne['a_payer'], 
+                'date_echeance' => $dateEcheance->format('Y-m-d')
+            ]);
+            
+            // Décaler la date d'échéance d'un mois pour la prochaine mensualité
+            $dateEcheance->modify('+1 month');
+        }
+
+        return $resultPret;
+    }
 
     public static function listerPrets($conditions = [], $orderBy = null, $direction = 'ASC')
     {
-        // Adapter les filtres montant_min/montant_max pour le champ montant
-        $cond = $conditions;
-        if (isset($cond['montant_min'])) {
-            $cond['montant_min'] = $cond['montant_min']; // déjà bon, la logique est dans BaseModel
-        }
-        if (isset($cond['montant_max'])) {
-            $cond['montant_max'] = $cond['montant_max'];
-        }
-        $result = self::selectionnerDonnee('pret', $cond);
+        $result = self::selectionnerDonnee('simulation_pret', $conditions);
         if ($orderBy && $result['succes'] && !empty($result['data'])) {
             usort($result['data'], function ($a, $b) use ($orderBy, $direction) {
                 if ($a[$orderBy] == $b[$orderBy]) return 0;
@@ -166,17 +298,17 @@ class PretClientModel extends BaseModel
 
     public static function getPretById($id)
     {
-        return self::chercherDonnee('pret', ['id_pret' => $id]);
+        return self::chercherDonnee('simulation_pret', ['id_simulation_pret' => $id]);
     }
 
     public static function modifierPret($id, $data)
     {
-        return self::modifierDonnee('pret', $data, ['id_pret' => $id]);
+        return self::modifierDonnee('simulation_pret', $data, ['id_simulation_pret' => $id]);
     }
 
     public static function supprimerPret($id)
     {
-        return self::supprimerDonnee('pret', ['id_pret' => $id]);
+        return self::supprimerDonnee('simulation_pret', ['id_simulation_pret' => $id]);
     }
 
     public static function listerTypesPret()
@@ -198,7 +330,7 @@ class PretClientModel extends BaseModel
 
     // Lister les remboursements (avec conditions optionnelles)
     public static function listerRemboursements($conditions = [], $orderBy = null, $direction = 'ASC') {
-        $result = self::selectionnerDonnee('remboursement', $conditions);
+        $result = self::selectionnerDonnee('simulation_remboursement', $conditions);
         if ($orderBy && $result['succes'] && !empty($result['data'])) {
             usort($result['data'], function($a, $b) use ($orderBy, $direction) {
                 if ($a[$orderBy] == $b[$orderBy]) return 0;
@@ -214,20 +346,20 @@ class PretClientModel extends BaseModel
 
     // Obtenir un remboursement par son id
     public static function getRemboursementById($id) {
-        return self::chercherDonnee('remboursement', ['id_remboursement' => $id]);
+        return self::chercherDonnee('simulation_remboursement', ['id_simulation_remboursement' => $id]);
     }
 
 
     // Lister les remboursements d'un prêt donné
     public static function listerRemboursementsParPret($pretId) {
-        return self::selectionnerDonnee('remboursement', ['pret_id' => $pretId]);
+        return self::selectionnerDonnee('simulation_remboursement', ['pret_id' => $pretId]);
     }
 
     public static function getPretCompletById($id) {
         $db = getDB();
 
         // 1. Prêt de base
-        $stmt = $db->prepare("SELECT * FROM pret WHERE id_pret = :id");
+        $stmt = $db->prepare("SELECT * FROM simulation_pret WHERE id_simulation_pret = :id");
         $stmt->execute(['id' => $id]);
         $pret = $stmt->fetch();
         if (!$pret) return null;
@@ -256,8 +388,8 @@ class PretClientModel extends BaseModel
         $pret['compte'] = $compte;
 
         // 6. Remboursements
-        $stmt = $db->prepare("SELECT * FROM remboursement WHERE pret_id = :id ORDER BY numero_periode ASC");
-        $stmt->execute(['id' => $pret['id_pret']]);
+        $stmt = $db->prepare("SELECT * FROM simulation_remboursement WHERE pret_id = :id ORDER BY numero_periode ASC");
+        $stmt->execute(['id' => $pret['id_simulation_pret']]);
         $remboursements = $stmt->fetchAll();
 
         $nbParPeriode = $pret['periode']['nombre_mois'] ?? 1;

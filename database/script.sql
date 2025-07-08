@@ -99,11 +99,39 @@ CREATE TABLE remboursement (
     date_echeance DATE NOT NULL,
     FOREIGN KEY (pret_id) REFERENCES pret(id_pret)
 );
-CREATE TABLE assurance (
-    id_assurance INT AUTO_INCREMENT PRIMARY KEY,
-    pret_id INT NOT NULL,
+
+CREATE TABLE simulation_pret (
+    id_simulation_pret INT AUTO_INCREMENT PRIMARY KEY,
+    date_pret DATE NOT NULL DEFAULT CURRENT_DATE,
+    type_pret_id INT NOT NULL,
+    compte_id INT NOT NULL,
     montant DECIMAL(15,2) NOT NULL,
-    date_assurance DATE NOT NULL,
-    FOREIGN KEY (pret_id) REFERENCES pret(id_pret)
+    duree INT NOT NULL,
+    periode_id INT NOT NULL,
+    pourcentage_assurance DECIMAL(5,2) NOT NULL,
+    FOREIGN KEY (type_pret_id) REFERENCES type_pret(id_type_pret),
+    FOREIGN KEY (compte_id) REFERENCES compte(id_compte),
+    FOREIGN KEY (periode_id) REFERENCES periode(id_periode)
 );
 
+CREATE TABLE simulation_remboursement (
+    id_simulation_remboursement INT AUTO_INCREMENT PRIMARY KEY,
+    pret_id INT NOT NULL,
+    numero_periode INT NOT NULL,
+    base DECIMAL(15,2) NOT NULL,
+    interet DECIMAL(15,2) NOT NULL,
+    amortissement DECIMAL(15,2) NOT NULL,
+    mensualite DECIMAL(15,2) NOT NULL,
+    assurance DECIMAL(15,2) NOT NULL,
+    a_payer DECIMAL(15,2) NOT NULL,
+    date_echeance DATE NOT NULL,
+    FOREIGN KEY (pret_id) REFERENCES simulation_pret(id_simulation_pret)
+);
+
+CREATE TABLE valider_simulation (
+    id_valider_simulation INT AUTO_INCREMENT PRIMARY KEY,
+    simulation_pret_id INT NOT NULL,
+    pret_id INT NOT NULL,
+    FOREIGN KEY (simulation_pret_id) REFERENCES simulation_pret(id_simulation_pret),
+    FOREIGN KEY (pret_id) REFERENCES pret(id_pret)
+);
