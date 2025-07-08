@@ -111,10 +111,12 @@ function ajouterPret() {
 
     ajax('POST', '/gestionPret/ajouter', params.toString(), function(data) {
         if (data.succes) {
+            console.log(data);
             alert('Prêt ajouté avec succès!');
             form.reset();
             chargerPrets();
         } else {
+            console.log(data);
             alert('Erreur: ' + data.message);
         }
     });
