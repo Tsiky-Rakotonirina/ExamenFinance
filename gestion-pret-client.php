@@ -69,6 +69,9 @@
     </div>
     </div>
   </div>
+<div id="fiche-pret-container"></div>
+
+
   <div class="col-droite">
     <h2>Ajouter un prêt</h2>
     <div class="content-zone">

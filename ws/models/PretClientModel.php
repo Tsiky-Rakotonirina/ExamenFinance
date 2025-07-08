@@ -208,4 +208,76 @@ class PretClientModel extends BaseModel
     public static function listerRemboursementsParPret($pretId) {
         return self::selectionnerDonnee('remboursement', ['pret_id' => $pretId]);
     }
+
+    public static function getPretCompletById($id) {
+        $db = getDB();
+
+        // 1. Prêt de base
+        $stmt = $db->prepare("SELECT * FROM pret WHERE id_pret = :id");
+        $stmt->execute(['id' => $id]);
+        $pret = $stmt->fetch();
+        if (!$pret) return null;
+
+        // 2. Type de prêt
+        $stmt = $db->prepare("SELECT * FROM type_pret WHERE id_type_pret = :id");
+        $stmt->execute(['id' => $pret['type_pret_id']]);
+        $pret['type_pret'] = $stmt->fetch();
+
+        // 3. Période
+        $stmt = $db->prepare("SELECT * FROM periode WHERE id_periode = :id");
+        $stmt->execute(['id' => $pret['periode_id']]);
+        $pret['periode'] = $stmt->fetch();
+
+        // 4. Compte
+        $stmt = $db->prepare("SELECT * FROM compte WHERE id_compte = :id");
+        $stmt->execute(['id' => $pret['compte_id']]);
+        $compte = $stmt->fetch();
+
+        // 5. Client
+        if ($compte) {
+            $stmt = $db->prepare("SELECT * FROM client WHERE id_client = :id");
+            $stmt->execute(['id' => $compte['client_id']]);
+            $compte['client'] = $stmt->fetch();
+        }
+        $pret['compte'] = $compte;
+
+        // 6. Remboursements
+        $stmt = $db->prepare("SELECT * FROM remboursement WHERE pret_id = :id ORDER BY numero_periode ASC");
+        $stmt->execute(['id' => $pret['id_pret']]);
+        $remboursements = $stmt->fetchAll();
+
+        $nbParPeriode = $pret['periode']['nombre_mois'] ?? 1;
+        $remboursements_groupes = [];
+        $groupe_index = 1;
+
+        for ($i = 0; $i < count($remboursements); $i += $nbParPeriode) {
+            $groupe = array_slice($remboursements, $i, $nbParPeriode);
+            $somme_base = 0;
+            $somme_interet = 0;
+            $somme_amortissement = 0;
+            $somme_a_payer = 0;
+
+            foreach ($groupe as $r) {
+                $somme_base += floatval($r['base']);
+                $somme_interet += floatval($r['interet']);
+                $somme_amortissement += floatval($r['amortissement']);
+                $somme_a_payer += floatval($r['a_payer']);
+            }
+
+            $remboursements_groupes[] = [
+                'periode_label' => $pret['periode']['libelle'] . ' ' . $groupe_index,
+                'base' => round($somme_base, 2),
+                'interet' => round($somme_interet, 2),
+                'amortissement' => round($somme_amortissement, 2),
+                'a_payer' => round($somme_a_payer, 2)
+            ];
+
+            $groupe_index++;
+        }
+
+        $pret['remboursements'] = $remboursements_groupes;
+
+        return $pret;
+    }
+
 }

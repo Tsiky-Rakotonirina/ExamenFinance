@@ -36,4 +36,13 @@ class PretClientController {
         $prets = PretClientModel::listerPrets();
         Flight::json($prets);
     }
+
+    public function getPretCompletById($id) {
+        $pret = PretClientModel::getPretCompletById($id);
+        if ($pret) {
+            Flight::json(['succes' => true, 'data' => $pret]);
+        } else {
+            Flight::json(['succes' => false, 'message' => 'Prêt introuvable']);
+        }
+    }
 }

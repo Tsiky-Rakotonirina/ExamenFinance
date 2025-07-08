@@ -34,7 +34,7 @@ INSERT INTO compte (client_id, status_compte_id, solde) VALUES
 
 -- Donnees pour la table periode
 INSERT INTO periode (nom, nombre_mois, libelle) VALUES
-('Mensuel', 1, 12),
-('Trimestriel', 3, 4),
-('Semestriel', 6, 2),
-('Annuel', 12, 1);
+('Mensuel', 1, 'Mensualite'),
+('Trimestriel', 3, 'Trimestrialite'),
+('Semestriel', 6, 'Semestrialite'),
+('Annuel', 12, 'Annuite');

@@ -95,8 +95,83 @@ function afficherPrets(prets) {
             <td>${pret.compte_id}</td>
             <td>${parseFloat(pret.montant).toFixed(2)}€</td>
             <td>${pret.duree} mois</td>
+            <td><button class="btn-fiche" data-id="${pret.id_pret}">Voir fiche</button></td>
         `;
         tbody.appendChild(row);
+    });
+}
+
+document.querySelector('#lister-pret tbody').addEventListener('click', function (e) {
+    if (e.target && e.target.classList.contains('btn-fiche')) {
+        const id = e.target.dataset.id;
+        afficherFichePret(id);
+    }
+});
+
+
+function afficherFichePret(id) {
+    ajax('GET', `/gestionPret/fichePret/${id}`, null, data => {
+        if (!data || !data.succes) {
+            alert("Erreur lors de la récupération du prêt.");
+            return;
+        }
+
+        const pret = data.data;
+        const compte = pret.compte || {};
+        const client = compte.client || {};
+        const typePret = pret.type_pret || {};
+        const periode = pret.periode || {};
+        const remboursements = pret.remboursements || [];
+
+        // Création HTML
+        let ficheHTML = `
+            <h3>Fiche du prêt #${pret.id_pret}</h3>
+            <p><strong>Client :</strong> ${client.nom || 'N/A'}</p>
+            <p><strong>Compte :</strong> #${compte.id_compte || 'N/A'}</p>
+            <p><strong>Date :</strong> ${pret.date_pret}</p>
+            <p><strong>Type de prêt :</strong> ${typePret.nom} (${typePret.taux_annuel}% taux)</p>
+            <p><strong>Période :</strong> ${periode.nom} (${periode.nombre_mois} mois)</p>
+            <p><strong>Durée :</strong> ${pret.duree} mois</p>
+            <p><strong>Montant :</strong> ${parseFloat(pret.montant).toLocaleString('fr-FR', { minimumFractionDigits: 2 })} €</p>
+            <h4>Remboursements (${periode.libelle || 'Mensualité'}) :</h4>
+            <table style="border-collapse: collapse; width: 100%; margin-top:10px;">
+                <thead>
+                    <tr style="background:#f0f0f0">
+                        <th style="padding:6px;border:1px solid #ccc;">Période</th>
+                        <th style="padding:6px;border:1px solid #ccc;">Base</th>
+                        <th style="padding:6px;border:1px solid #ccc;">Intérêt</th>
+                        <th style="padding:6px;border:1px solid #ccc;">Amortissement</th>
+                        <th style="padding:6px;border:1px solid #ccc;">${periode.libelle}</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+        remboursements.forEach(r => {
+            ficheHTML += `
+                <tr>
+                    <td style="padding:6px;border:1px solid #ccc;">${r.periode_label}</td>
+                    <td style="padding:6px;border:1px solid #ccc;">${parseFloat(r.base).toFixed(2)} €</td>
+                    <td style="padding:6px;border:1px solid #ccc;">${parseFloat(r.interet).toFixed(2)} €</td>
+                    <td style="padding:6px;border:1px solid #ccc;">${parseFloat(r.amortissement).toFixed(2)} €</td>
+                    <td style="padding:6px;border:1px solid #ccc;">${parseFloat(r.a_payer).toFixed(2)} €</td>
+                </tr>
+            `;
+        });
+
+        ficheHTML += `
+                </tbody>
+            </table>
+        `;
+
+        const container = document.getElementById('fiche-pret-container');
+        if (container) {
+            container.innerHTML = ficheHTML;
+            container.scrollIntoView({ behavior: 'smooth' });
+        } else {
+            alert("Aucun conteneur prévu pour afficher la fiche du prêt.");
+            console.log(ficheHTML);
+        }
     });
 }
 
