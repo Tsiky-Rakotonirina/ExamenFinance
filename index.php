@@ -29,6 +29,10 @@
             <a href="statistique-interet.php" class="nav-button btn-statistique">
                 Statistiques Intérêts
             </a>
+
+            <a href="template.php?page=simuler-pret" class="nav-button btn-statistique">
+                SIMULER FOND
+            </a>
         </div>
         
         <div class="footer">
