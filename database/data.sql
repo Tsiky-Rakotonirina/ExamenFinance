@@ -66,11 +66,11 @@ INSERT INTO compte (client_id, status_compte_id, solde) VALUES
 
 -- Donnees pour la table periode
 INSERT INTO periode (nom, nombre_mois, libelle) VALUES
-('Mensuel', 1, 'Mensualité'),
-('Bimestriel', 2, 'Bimestrialité'),
-('Trimestriel', 3, 'Trimestrialité'),
-('Semestriel', 6, 'Semestrialité'),
-('Annuel', 12, 'Annuité');
+('Mensuel', 1, 'Mensualite'),
+('Bimestriel', 2, 'Bimestrialite'),
+('Trimestriel', 3, 'Trimestrialite'),
+('Semestriel', 6, 'Semestrialite'),
+('Annuel', 12, 'Annuite');
 
 -- Donnees pour la table pret (Prêts accordés)
 INSERT INTO pret (date_pret, type_pret_id, compte_id, montant, duree, periode_id, pourcentage_assurance) VALUES
@@ -91,7 +91,7 @@ INSERT INTO simulation_pret (date_pret, type_pret_id, compte_id, montant, duree,
 (NOW(), 5, 4, 150000.00, 60, 3, 0.60),
 (NOW(), 6, 8, 8000.00, 12, 1, 1.00);
 
--- Exemples de remboursements pour le premier prêt (ID 1 - 25000€ sur 24 mois)
+-- Exemples de remboursements pour le premier pret (ID 1 - 25000 sur 24 mois)
 INSERT INTO remboursement (pret_id, numero_periode, base, interet, amortissement, mensualite, assurance, a_payer, date_echeance) VALUES
 (1, 1, 25000.00, 114.58, 1031.94, 1146.52, 10.42, 1156.94, '2025-06-15'),
 (1, 2, 23968.06, 109.81, 1036.71, 1146.52, 10.42, 1156.94, '2025-07-15'),

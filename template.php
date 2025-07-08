@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="css/template.css">
     <link rel="stylesheet" href="css/default.css">
     <script>
-        const urlBase = '/ETU003256/Finance/';
+        const urlBase = '/ETU003349/ExamenFinance/ws';
 
         function ajax(method, url, data, callback) {
             const xhr = new XMLHttpRequest();
