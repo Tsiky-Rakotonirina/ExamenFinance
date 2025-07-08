@@ -154,7 +154,7 @@ function afficherFichePret(id) {
             <div class="fiche-overlay">
                 <div class="fiche-modal">
                     <div class="fiche-header">
-                        <h3>Fiche du prêt #${pret.id_pret}</h3>
+                        <h3 style="color:white;">Fiche du prêt #${pret.id_pret}</h3>
                         <div class="fiche-header-buttons">
                             <button class="btn-exporter-pdf" onclick="exporterFicheEnPDF(${pret.id_pret})">Exporter en PDF</button>
                             <button class="btn-fermer-fiche" onclick="fermerFiche()">×</button>
