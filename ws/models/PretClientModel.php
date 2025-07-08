@@ -147,7 +147,15 @@ class PretClientModel extends BaseModel
 
     public static function listerPrets($conditions = [], $orderBy = null, $direction = 'ASC')
     {
-        $result = self::selectionnerDonnee('pret', $conditions);
+        // Adapter les filtres montant_min/montant_max pour le champ montant
+        $cond = $conditions;
+        if (isset($cond['montant_min'])) {
+            $cond['montant_min'] = $cond['montant_min']; // déjà bon, la logique est dans BaseModel
+        }
+        if (isset($cond['montant_max'])) {
+            $cond['montant_max'] = $cond['montant_max'];
+        }
+        $result = self::selectionnerDonnee('pret', $cond);
         if ($orderBy && $result['succes'] && !empty($result['data'])) {
             usort($result['data'], function ($a, $b) use ($orderBy, $direction) {
                 if ($a[$orderBy] == $b[$orderBy]) return 0;

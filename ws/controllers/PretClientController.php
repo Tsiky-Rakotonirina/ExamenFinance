@@ -40,7 +40,11 @@ class PretClientController
     // API : liste des prêts en JSON pour le JS
     public function listerPretsApi()
     {
-        $prets = PretClientModel::listerPrets();
+        $params = Flight::request()->query->getData();
+        $orderBy = $params['orderBy'] ?? null;
+        $direction = $params['direction'] ?? 'ASC';
+        unset($params['orderBy'], $params['direction']);
+        $prets = PretClientModel::listerPrets($params, $orderBy, $direction);
         Flight::json($prets);
     }
 

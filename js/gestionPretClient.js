@@ -287,7 +287,27 @@ function ajouterPret() {
 
 
 function filtrerPrets() {
-    chargerPrets();
+    // Récupère les valeurs du formulaire de filtre
+    const form = document.getElementById('filtre-prets');
+    const formData = new FormData(form);
+    const params = new URLSearchParams();
+    for (const [key, value] of formData.entries()) {
+        if (value !== '') {
+            // Pour montant_min et montant_max, filtrer sur le champ montant
+            if (key === 'montant_min') {
+                params.append('montant_min', value);
+            } else if (key === 'montant_max') {
+                params.append('montant_max', value);
+            } else {
+                params.append(key, value);
+            }
+        }
+    }
+    ajax('GET', '/gestionPret/api/lister?' + params.toString(), null, data => {
+        if (data.succes) {
+            afficherPrets(data.data);
+        }
+    });
 }
 
 function chargerTypesPretFormulaire() {
