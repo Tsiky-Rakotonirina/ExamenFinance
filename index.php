@@ -30,8 +30,8 @@
                 Statistiques Intérêts
             </a>
 
-            <a href="template.php?page=simuler-pret" class="nav-button btn-statistique">
-                SIMULER FOND
+            <a href="template.php?page=simuler-pret" class="nav-button btn-simuler-pret">
+                Simulation de prêt
             </a>
         </div>
 

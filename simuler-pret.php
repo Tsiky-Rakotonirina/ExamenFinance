@@ -27,6 +27,7 @@
         <table id="lister-pret">
             <thead>
                 <tr>
+                    <th>A comparer</th>
                     <th>ID Simulation</th>
                     <th>Date</th>
                     <th>Type</th>
