@@ -4,8 +4,9 @@
 <!-- Expose base_url pour JS -->
 <script>window.BASE_URL = "<?=$url?>";</script>
 
-<!-- Inclusion du JS spécifique -->
-<script src="<?=$url ?>/public/assets/js/gestionPret/index.js" defer></script>
+<!-- Inclusion des JS spécifiques -->
+<script src="<?=$url ?>/public/assets/js/gestionPret/dataManager.js" defer></script>
+<script src="<?=$url ?>/public/assets/js/gestionPret/uiManager.js" defer></script>
 
 <div class="gestion-pret-layout">
   <div class="col-gauche">
