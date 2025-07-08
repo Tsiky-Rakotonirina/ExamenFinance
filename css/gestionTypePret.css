@@ -285,58 +285,166 @@ th[style*="cursor: pointer"] {
     color: var(--primary-color);
 }
 
-/* Amélioration des modales spécifiques */
+/* MODALES TYPE PRET */
 #modifier-type-pret-div {
     position: fixed;
-    top: 20%;
+    top: 5vh;
     left: 50%;
     transform: translateX(-50%);
-    background: var(--white);
-    border: 1px solid var(--border-color);
-    padding: 2rem;
-    z-index: 1000;
-    border-radius: 12px;
-    box-shadow: var(--shadow-light);
-    min-width: 400px;
+    min-width: 520px;
+    max-width: 90vw;
+    max-height: 85vh;
+    background: #fff;
+    border-radius: 3px;
+    box-shadow: 0 8px 32px rgba(90,107,71,0.18), 0 1.5px 8px rgba(125,132,113,0.10);
+    border: 2px solid var(--primary-color);
+    z-index: 2000;
+    padding: 1.8rem 2rem 1.8rem 2rem;
+    display: none;
+}
+#modifier-type-pret-div h3 {
+    color: var(--primary-color);
+    margin-bottom: 1.2rem;
+    font-size: 1.3rem;
+    text-align: center;
+    letter-spacing: 0.5px;
+}
+#modifier-type-pret-div form {
+    display: flex;
+    flex-direction: column;
+    max-height: none;
+    overflow-y: visible;
+    padding-right: 0;
+}
+#modifier-type-pret-div form .form-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.4rem 1.2rem;
+    align-items: center;
+}
+#modifier-type-pret-div form .form-fields > div {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 0;
+}
+#modifier-type-pret-div form .form-fields label {
+    margin-bottom: 0.08rem;
+    font-size: 0.95rem;
+}
+#modifier-type-pret-div form .form-fields input,
+#modifier-type-pret-div form .form-fields select {
+    font-size: 0.96rem;
+    padding: 0.5rem 0.6rem;
+    border-radius: 4px;
+    margin-top: 0.05rem;
+    margin-bottom: 0.08rem;
+}
+#btn-modifier-type-pret {
+    margin-top: 1.5rem;
+    width: 50%;
+    align-self: center;
+    position: relative;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    grid-column: unset !important;
+    justify-self: unset !important;
+}
+#modifier-type-pret-div form button[type="submit"] {
+    margin-top: 1.5rem;
+    width: 50%;
+    align-self: center;
+    position: relative;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    grid-column: unset !important;
+    justify-self: unset !important;
+}
+@media (max-width: 700px) {
+  #modifier-type-pret-div {
+    min-width: 92vw;
+    padding: 1rem 0.8rem;
+  }
+  #modifier-type-pret-div form .form-fields {
+    grid-template-columns: 1fr;
+    gap: 0.4rem 0;
+  }
+  #btn-modifier-type-pret, #modifier-type-pret-div form button[type="submit"] {
+    width: 80%;
+  }
 }
 
-#historique-type-pret-div {
+/* Responsive: 1 colonne sur mobile */
+@media (max-width: 700px) {
+  #modifier-type-pret-div form .form-fields {
+    grid-template-columns: 1fr;
+    gap: 0.7rem 0;
+  }
+}
+
+/* Visibilité accrue des modales */
+#modifier-type-pret-div, #historique-type-pret-div {
+    box-shadow: 0 12px 40px 0 rgba(90,107,71,0.28), 0 2px 12px rgba(125,132,113,0.16);
+    border-width: 2.5px;
+    outline: 3px solid rgba(125,132,113,0.10);
+    outline-offset: 2px;
+}
+#modifier-type-pret-div:hover, #historique-type-pret-div:hover {
+    box-shadow: 0 16px 48px 0 rgba(44,62,45,0.28), 0 4px 16px rgba(125,132,113,0.18);
+    outline-color: var(--primary-color);
+}
+
+/* Bouton de fermeture plus visible au survol */
+#modifier-type-pret-div .close-btn:hover, #btn-fermer-modification:hover,
+#historique-type-pret-div .close-btn:hover, #btn-fermer-historique:hover {
+    color: #e74c3c;
+    background: rgba(125,132,113,0.08);
+    border-radius: 50%;
+}
+
+/* Pour éviter que le formulaire soit trop long */
+#modifier-type-pret-div form {
+    max-height: 60vh;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+}
+
+/* Pour que l'overlay soit toujours derrière la modale */
+#modifier-type-pret-div, #historique-type-pret-div {
+    z-index: 2001;
+}
+
+/* Overlay pour modale, plus visible */
+.modal-overlay {
     position: fixed;
-    top: 15%;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--white);
-    border: 1px solid var(--border-color);
-    padding: 2rem;
-    z-index: 1000;
-    min-width: 400px;
-    border-radius: 12px;
-    box-shadow: var(--shadow-light);
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(44, 62, 45, 0.32);
+    z-index: 1999;
+    display: none;
+    animation: overlayFadeIn 0.3s;
+}
+@keyframes overlayFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
-/* Table d'historique */
-#table-historique-type-pret {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 10px;
+/* Animation d’apparition */
+#modifier-type-pret-div, #historique-type-pret-div {
+    animation: modalFadeIn 0.32s cubic-bezier(.4,1.4,.6,1) both;
+}
+@keyframes modalFadeIn {
+    from { opacity: 0; transform: translate(-50%, 10vh) scale(0.98); }
+    to { opacity: 1; transform: translate(-50%, 0) scale(1); }
 }
 
-#table-historique-type-pret th {
-    padding: 0.8rem;
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    color: white;
-    border: 1px solid var(--border-color);
-    font-weight: 600;
+/* Scrollbar pour modale */
+#modifier-type-pret-div::-webkit-scrollbar, #historique-type-pret-div::-webkit-scrollbar {
+    width: 8px;
 }
-
-#table-historique-type-pret td {
-    padding: 0.8rem;
-    border: 1px solid var(--border-color);
-    background: var(--white);
-}
-
-#table-historique-type-pret tbody tr:hover {
-    background-color: rgba(125, 132, 113, 0.05);
+#modifier-type-pret-div::-webkit-scrollbar-thumb, #historique-type-pret-div::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 4px;
 }
 
 /* Responsive */

@@ -79,7 +79,6 @@
     <span id="btn-fermer-modification" class="close-btn">&times;</span>
     <h3>Fiche de modification de Type de Pret</h3>
     <form id="modifier-type-pret">
-        <button id="btn-modifier-type-pret" type="submit">Valider</button>
         <input type="hidden" id="m_id_type_pret">
         <label for="nom">Nom :</label>
         <input type="text" id="m_nom" required>
@@ -93,6 +92,7 @@
         <input type="number" id="m_taux_annuel" step="1" required>
         <label for="echeance_initiale">Echeance initiale :</label>
         <input type="number" id="m_echeance_initiale" placeholder="Échéance initiale (entier)" required>
+        <button id="btn-modifier-type-pret" type="submit">Valider</button>
     </form>
 </div>
 
