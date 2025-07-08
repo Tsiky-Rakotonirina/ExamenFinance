@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (json.succes) {
         afficherFonds(json.fonds || []);
         document.querySelector('#fond-actuel').textContent =
-          'Fond actuel : ' + parseFloat(json.fondActuel).toFixed(2) + ' Ar';
+          'Fond actuel : ' + parseFloat(json.fondActuel).toFixed(2) + ' €';
       } else {
         alert(json.message || 'Erreur chargement fonds');
       }

@@ -13,7 +13,7 @@
                 <input type="number" id="a_montant" placeholder="Ex : 200000" min="0" step="1" required><br><br>
                 <button type="button" id="btn-ajouter-fond">Ajouter</button><br>
             </form>
-            <h5 id="fond-actuel">Fond actuel</h5>
+            <h5 id="fond-actuel">Total des fonds</h5>
         </div>
         
         <!-- Section droite -->

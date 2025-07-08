@@ -8,10 +8,6 @@ class GestionFondModel extends BaseModel {
         $query = "SELECT SUM(montant) FROM fond";
         $fondTotal = self::executeQuery($query, []);
         $fondTotal = $fondTotal['data'][0][0];
-        $query = "SELECT SUM(montant) FROM pret";
-        $pretTotal = self::executeQuery($query, []);
-        $pretTotal = $pretTotal['data'][0][0];
-        $result = $fondTotal - $pretTotal;
-        return $result;
+        return $fondTotal;
     }
 }
