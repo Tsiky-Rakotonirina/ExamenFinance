@@ -36,8 +36,5 @@
     <main>
         <?php include($folder.$page.".php") ?>    
     </main>
-    <footer>
-        &copy; <?=date('Y')?> Finance - Système d'information financier
-    </footer>
 </body>
 </html>

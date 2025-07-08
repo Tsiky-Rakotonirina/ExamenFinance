@@ -1,4 +1,17 @@
+// Variables globales pour la gestion des prêts
+let currentPage = 1;
+let itemsPerPage = 10;
+let totalItems = 0;
+let allPrets = []; // Pour stocker tous les prêts
+let originalPrets = []; // Pour garder les données originales
+
+// Variables globales pour les mappings
+let typesPretMap = new Map(); // Map pour stocker id -> nom des types de prêt
+let comptesMap = new Map(); // Map pour stocker id -> nom des comptes
+
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM chargé - Initialisation des gestionnaires d\'événements');
+    
     // Charger les données initiales dans le bon ordre
     // D'abord charger les types de prêt et comptes pour créer les mappings
     Promise.all([
@@ -15,36 +28,72 @@ document.addEventListener('DOMContentLoaded', function() {
     chargerPeriodesFormulaire();
 
     // Gestion du formulaire d'ajout de prêt
-    document.getElementById('ajouter-pret').addEventListener('submit', function(e) {
-        e.preventDefault();
-        ajouterPret();
-    });
+    const formAjoutPret = document.getElementById('ajouter-pret');
+    if (formAjoutPret) {
+        formAjoutPret.addEventListener('submit', function(e) {
+            e.preventDefault();
+            ajouterPret();
+        });
+    } else {
+        console.warn('Formulaire ajouter-pret non trouvé');
+    }
 
     // Gestion du filtre
-    document.getElementById('filtre-prets').addEventListener('submit', function(e) {
-        e.preventDefault();
-        filtrerPrets();
-    });
+    const formFiltre = document.getElementById('filtre-prets');
+    if (formFiltre) {
+        formFiltre.addEventListener('submit', function(e) {
+            e.preventDefault();
+            filtrerPrets();
+        });
+    } else {
+        console.warn('Formulaire filtre-prets non trouvé');
+    }
 
     // Reset du filtre
-    document.getElementById('reset-filtre').addEventListener('click', function() {
-        document.getElementById('filtre-prets').reset();
-        
-        // Enlever la classe active de tous les boutons de tri
-        document.querySelectorAll('.btn-tri').forEach(btn => {
-            btn.classList.remove('active');
+    const btnReset = document.getElementById('reset-filtre');
+    if (btnReset) {
+        btnReset.addEventListener('click', function() {
+            document.getElementById('filtre-prets').reset();
+            
+            // Enlever la classe active de tous les boutons de tri
+            document.querySelectorAll('.btn-tri').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Réinitialiser la direction de tri
+            const triDirection = document.getElementById('tri_direction');
+            if (triDirection) {
+                triDirection.value = 'ASC';
+            }
+            
+            // Restaurer les données originales et réinitialiser la pagination
+            allPrets = [...originalPrets];
+            totalItems = allPrets.length;
+            currentPage = 1;
+            afficherPageCourante();
+            
+            console.log('Filtres réinitialisés - affichage de tous les prêts');
         });
-        
-        // Réinitialiser la direction de tri
-        document.getElementById('tri_direction').value = 'ASC';
-        
-        // Recharger tous les prêts et réinitialiser la pagination
-        chargerPrets();
-    });
+    } else {
+        console.warn('Bouton reset-filtre non trouvé');
+    }
 
-    // Gestion du tri
-    document.querySelectorAll('.btn-tri').forEach(button => {
+    // Gestion du tri avec vérification améliorée
+    const boutonsTri = document.querySelectorAll('.btn-tri');
+    console.log(`Nombre de boutons de tri trouvés: ${boutonsTri.length}`);
+    
+    boutonsTri.forEach((button, index) => {
+        console.log(`Bouton ${index}: data-col="${button.dataset.col}"`);
         button.addEventListener('click', function() {
+            console.log(`Clic sur bouton de tri: ${this.dataset.col}`);
+            
+            // Vérifier que l'élément direction existe
+            const directionSelect = document.getElementById('tri_direction');
+            if (!directionSelect) {
+                console.error('Élément tri_direction manquant dans le DOM');
+                return;
+            }
+            
             // Enlever la classe active de tous les boutons
             document.querySelectorAll('.btn-tri').forEach(btn => {
                 btn.classList.remove('active');
@@ -52,29 +101,63 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Ajouter la classe active au bouton cliqué
             this.classList.add('active');
+            console.log(`Bouton activé: ${this.dataset.col}`);
             
             const colonne = this.dataset.col;
-            const direction = document.getElementById('tri_direction').value;
+            const direction = directionSelect.value;
+            console.log(`Appel trierPrets avec colonne=${colonne}, direction=${direction}`);
             trierPrets(colonne, direction);
         });
     });
-
-    // Gestion de la pagination
-    document.getElementById('pagination-first').addEventListener('click', () => allerALaPage(1));
-    document.getElementById('pagination-prev').addEventListener('click', () => allerALaPage(currentPage - 1));
-    document.getElementById('pagination-next').addEventListener('click', () => allerALaPage(currentPage + 1));
-    document.getElementById('pagination-last').addEventListener('click', () => allerALaPage(Math.ceil(totalItems / itemsPerPage)));
     
-    document.getElementById('pagination-size-select').addEventListener('change', function() {
-        itemsPerPage = parseInt(this.value);
-        currentPage = 1;
-        afficherPageCourante();
-    });
+    // Ajouter un gestionnaire sur le select de direction pour réappliquer le tri
+    const directionSelect = document.getElementById('tri_direction');
+    if (directionSelect) {
+        directionSelect.addEventListener('change', function() {
+            const activeButton = document.querySelector('.btn-tri.active');
+            if (activeButton) {
+                const colonne = activeButton.dataset.col;
+                const direction = this.value;
+                console.log(`Changement de direction: ${direction}, re-tri sur ${colonne}`);
+                trierPrets(colonne, direction);
+            }
+        });
+    }
+
+    // Gestion de la pagination avec vérification
+    const paginationFirst = document.getElementById('pagination-first');
+    const paginationPrev = document.getElementById('pagination-prev');
+    const paginationNext = document.getElementById('pagination-next');
+    const paginationLast = document.getElementById('pagination-last');
+    const paginationSizeSelect = document.getElementById('pagination-size-select');
+    
+    if (paginationFirst) {
+        paginationFirst.addEventListener('click', () => allerALaPage(1));
+    }
+    if (paginationPrev) {
+        paginationPrev.addEventListener('click', () => allerALaPage(currentPage - 1));
+    }
+    if (paginationNext) {
+        paginationNext.addEventListener('click', () => allerALaPage(currentPage + 1));
+    }
+    if (paginationLast) {
+        paginationLast.addEventListener('click', () => allerALaPage(Math.ceil(totalItems / itemsPerPage)));
+    }
+    if (paginationSizeSelect) {
+        paginationSizeSelect.addEventListener('change', function() {
+            itemsPerPage = parseInt(this.value);
+            currentPage = 1;
+            afficherPageCourante();
+        });
+    }
+    
+    console.log('Gestionnaires d\'événements initialisés');
 });
 
 // Helper pour préfixer les URLs API
 function apiUrl(path) {
-    let base = window.BASE_URL || '';
+    // Utiliser une URL de base par défaut basée sur l'URL actuelle
+    let base = window.BASE_URL || 'http://localhost/ExamenFinance/ws';
     if (base.endsWith('/')) base = base.slice(0, -1);
     if (!path.startsWith('/')) path = '/' + path;
     return base + path;
@@ -169,7 +252,8 @@ function chargerPrets() {
         .then(data => {
             console.log('Données reçues:', data);
             if (data.succes) {
-                allPrets = data.data; // Stocker tous les prêts
+                originalPrets = [...data.data]; // Sauvegarder les données originales
+                allPrets = [...data.data]; // Copie pour les manipulations
                 totalItems = allPrets.length;
                 currentPage = 1;
                 afficherPageCourante();
@@ -238,14 +322,26 @@ function ajouterPret() {
 
 // Filtrer les prêts
 function filtrerPrets() {
-    // Récupérer les valeurs du formulaire de filtre
-    const typePretId = document.getElementById('filtre_type_pret_id').value;
-    const compteId = document.getElementById('filtre_compte_id').value;
-    const montantMin = parseFloat(document.getElementById('filtre_montant_min').value) || 0;
-    const montantMax = parseFloat(document.getElementById('filtre_montant_max').value) || Infinity;
+    // Récupérer les valeurs du formulaire de filtre avec validation
+    const typePretSelect = document.getElementById('filtre_type_pret_id');
+    const compteSelect = document.getElementById('filtre_compte_id');
+    const montantMinInput = document.getElementById('filtre_montant_min');
+    const montantMaxInput = document.getElementById('filtre_montant_max');
     
-    // Filtrer tous les prêts
-    const pretsFiltres = allPrets.filter(pret => {
+    if (!typePretSelect || !compteSelect || !montantMinInput || !montantMaxInput) {
+        console.error('Éléments de filtre manquants dans le DOM');
+        return;
+    }
+    
+    const typePretId = typePretSelect.value;
+    const compteId = compteSelect.value;
+    const montantMin = parseFloat(montantMinInput.value) || 0;
+    const montantMax = parseFloat(montantMaxInput.value) || Infinity;
+    
+    console.log('Filtres appliqués:', { typePretId, compteId, montantMin, montantMax });
+    
+    // Filtrer à partir des données originales
+    const pretsFiltres = originalPrets.filter(pret => {
         let afficher = true;
         
         // Filtre par type de prêt
@@ -268,14 +364,29 @@ function filtrerPrets() {
     });
     
     // Mettre à jour les données filtrées et réinitialiser la pagination
-    allPrets = pretsFiltres;
+    allPrets = [...pretsFiltres]; // Copie des données filtrées
     totalItems = allPrets.length;
     currentPage = 1;
     afficherPageCourante();
+    
+    console.log(`Filtrage appliqué: ${totalItems} prêts trouvés sur ${originalPrets.length} total`);
 }
 
 // Trier les prêts
 function trierPrets(colonne, direction) {
+    console.log(`=== DÉBUT TRI ===`);
+    console.log(`Tri appliqué: colonne=${colonne}, direction=${direction}`);
+    console.log(`Nombre d'éléments à trier: ${allPrets.length}`);
+    
+    if (allPrets.length === 0) {
+        console.warn('Aucun prêt à trier');
+        return;
+    }
+    
+    // Sauvegarder l'état avant tri pour debug
+    const avant = allPrets.map(p => ({ id: p.id_pret, valeur: p[colonne] })).slice(0, 3);
+    console.log('Premiers éléments avant tri:', avant);
+    
     // Trier directement les données
     allPrets.sort((a, b) => {
         let valA, valB;
@@ -284,29 +395,41 @@ function trierPrets(colonne, direction) {
             case 'date_pret':
                 valA = new Date(a.date_pret);
                 valB = new Date(b.date_pret);
+                console.log(`Comparaison dates: ${a.date_pret} vs ${b.date_pret}`);
                 break;
             case 'montant':
                 valA = parseFloat(a.montant);
                 valB = parseFloat(b.montant);
+                console.log(`Comparaison montants: ${valA} vs ${valB}`);
                 break;
             case 'duree':
                 valA = parseInt(a.duree);
                 valB = parseInt(b.duree);
+                console.log(`Comparaison durées: ${valA} vs ${valB}`);
                 break;
             default:
                 valA = a.id_pret;
                 valB = b.id_pret;
+                console.log(`Comparaison IDs: ${valA} vs ${valB}`);
         }
         
+        let resultat;
         if (direction === 'DESC') {
-            return valA > valB ? -1 : valA < valB ? 1 : 0;
+            resultat = valA > valB ? -1 : valA < valB ? 1 : 0;
         } else {
-            return valA < valB ? -1 : valA > valB ? 1 : 0;
+            resultat = valA < valB ? -1 : valA > valB ? 1 : 0;
         }
+        
+        return resultat;
     });
+    
+    // Vérifier l'état après tri
+    const apres = allPrets.map(p => ({ id: p.id_pret, valeur: p[colonne] })).slice(0, 3);
+    console.log('Premiers éléments après tri:', apres);
     
     // Réafficher la page courante avec les données triées
     afficherPageCourante();
+    console.log('=== FIN TRI ===');
 }
 
 // Charger les types de prêt pour le formulaire d'ajout
@@ -426,16 +549,6 @@ function escapeHtml(text) {
     return text.replace(/[&<>"']/g, function(m) { return map[m]; });
 }
 
-// Variables globales pour la pagination
-let currentPage = 1;
-let itemsPerPage = 10;
-let totalItems = 0;
-let allPrets = []; // Pour stocker tous les prêts
-
-// Variables globales pour les mappings
-let typesPretMap = new Map(); // Map pour stocker id -> nom des types de prêt
-let comptesMap = new Map(); // Map pour stocker id -> nom des comptes
-
 // ============== PAGINATION ==============
 
 // Afficher la page courante
@@ -542,3 +655,50 @@ function genererNumerosDePage(totalPages) {
         paginationNumbers.appendChild(lastBtn);
     }
 }
+
+// Fonction de débogage pour vérifier l'état du système
+function debuggerStatus() {
+    console.log('=== DEBUG STATUS ===');
+    console.log('Original prêts:', originalPrets.length);
+    console.log('Prêts filtrés:', allPrets.length);
+    console.log('Page courante:', currentPage);
+    console.log('Items par page:', itemsPerPage);
+    console.log('Total items:', totalItems);
+    console.log('Types prêt map:', typesPretMap.size);
+    console.log('Comptes map:', comptesMap.size);
+    console.log('================');
+}
+
+// Fonction de test pour le tri (accessible depuis la console)
+function testTri(colonne = 'montant', direction = 'DESC') {
+    console.log(`=== TEST TRI MANUEL ===`);
+    console.log(`Test avec colonne: ${colonne}, direction: ${direction}`);
+    console.log(`Données disponibles: ${allPrets.length} prêts`);
+    
+    if (allPrets.length === 0) {
+        console.error('Aucune donnée disponible pour le test');
+        return false;
+    }
+    
+    // Afficher quelques exemples avant tri
+    console.log('Avant tri - premiers éléments:');
+    allPrets.slice(0, 3).forEach((pret, i) => {
+        console.log(`  ${i+1}. ID:${pret.id_pret}, ${colonne}: ${pret[colonne]}`);
+    });
+    
+    // Effectuer le tri
+    trierPrets(colonne, direction);
+    
+    // Afficher quelques exemples après tri
+    console.log('Après tri - premiers éléments:');
+    allPrets.slice(0, 3).forEach((pret, i) => {
+        console.log(`  ${i+1}. ID:${pret.id_pret}, ${colonne}: ${pret[colonne]}`);
+    });
+    
+    console.log(`=== FIN TEST TRI ===`);
+    return true;
+}
+
+// Exposer les fonctions de test globalement
+window.testTri = testTri;
+window.debugGestionPret = debuggerStatus;

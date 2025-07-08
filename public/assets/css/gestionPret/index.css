@@ -466,6 +466,130 @@ table tbody tr:hover {
     font-weight: bold;
 }
 
+/* -------------- CONTENEURS SCROLLABLES -------------- */
+/* Conteneurs principaux avec hauteur fixe et scroll */
+.types-pret-container, .comptes-container {
+    max-height: 280px;
+    overflow-y: auto;
+    border: 1px solid var(--neutral-300);
+    border-radius: var(--border-radius-md);
+    background-color: var(--neutral-100);
+    padding: var(--space-sm);
+    
+    /* Style de la scrollbar pour WebKit */
+    scrollbar-width: thin;
+    scrollbar-color: var(--neutral-400) var(--neutral-200);
+}
+
+/* Scrollbar WebKit personnalisée */
+.types-pret-container::-webkit-scrollbar,
+.comptes-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.types-pret-container::-webkit-scrollbar-track,
+.comptes-container::-webkit-scrollbar-track {
+    background: var(--neutral-200);
+    border-radius: var(--border-radius-sm);
+}
+
+.types-pret-container::-webkit-scrollbar-thumb,
+.comptes-container::-webkit-scrollbar-thumb {
+    background: var(--neutral-400);
+    border-radius: var(--border-radius-sm);
+    border: 1px solid var(--neutral-300);
+}
+
+.types-pret-container::-webkit-scrollbar-thumb:hover,
+.comptes-container::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-color);
+}
+
+/* Indicateur de scroll visible */
+.types-pret-container::before,
+.comptes-container::before {
+    content: '';
+    position: sticky;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(to bottom, rgba(74, 109, 167, 0.1), transparent);
+    z-index: 1;
+    margin-bottom: var(--space-xs);
+}
+
+/* Shadow gradient au bas pour indiquer plus de contenu */
+.types-pret-container::after,
+.comptes-container::after {
+    content: '';
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 10px;
+    background: linear-gradient(to top, rgba(255, 255, 255, 0.8), transparent);
+    pointer-events: none;
+    z-index: 1;
+    margin-top: calc(-10px - var(--space-xs));
+}
+
+/* Ajustements pour les options dans les conteneurs scrollables */
+.types-pret-container .type-pret-option,
+.comptes-container .compte-option {
+    margin-bottom: var(--space-sm);
+    border-radius: var(--border-radius-sm);
+    transition: all 0.2s ease;
+}
+
+.types-pret-container .type-pret-option:last-child,
+.comptes-container .compte-option:last-child {
+    margin-bottom: 0;
+}
+
+/* Focus et hover dans les conteneurs scrollables */
+.types-pret-container .type-pret-option:focus-within,
+.comptes-container .compte-option:focus-within {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* Amélioration de l'accessibilité - navigation au clavier */
+.types-pret-container:focus-within,
+.comptes-container:focus-within {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(74, 109, 167, 0.25);
+}
+
+/* Message d'état pour les conteneurs vides */
+.types-pret-container:empty::before,
+.comptes-container:empty::before {
+    content: 'Chargement...';
+    display: block;
+    text-align: center;
+    color: var(--neutral-500);
+    font-style: italic;
+    padding: var(--space-lg);
+}
+
+/* Responsive pour les conteneurs scrollables */
+@media (max-width: 768px) {
+    .types-pret-container, .comptes-container {
+        max-height: 200px;
+    }
+}
+
+@media (max-width: 480px) {
+    .types-pret-container, .comptes-container {
+        max-height: 160px;
+        font-size: 0.9rem;
+    }
+    
+    .type-pret-option, .compte-option {
+        padding: var(--space-sm);
+    }
+}
+
 /* -------------- PAGINATION -------------- */
 .pagination-container {
     display: flex;
