@@ -1,4 +1,5 @@
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
@@ -8,7 +9,8 @@
     <link rel="stylesheet" href="css/template.css">
     <link rel="stylesheet" href="css/default.css">
     <script>
-        const urlBase = 'http://localhost:80/S4/ExamenFinance/ws'; 
+        const urlBase = 'http://localhost:9443/ExamenFinance/ws';
+
         function ajax(method, url, data, callback) {
             const xhr = new XMLHttpRequest();
             xhr.open(method, urlBase + url, true);
@@ -24,20 +26,22 @@
     <script src="js/template.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 </head>
+
 <body>
     <div id="loader">
         <div></div>
     </div>
     <header>
         <nav class="menu">
-            
+
         </nav>
     </header>
     <main>
-        <?php include($_GET["page"].".php") ?>    
+        <?php include($_GET["page"] . ".php") ?>
     </main>
     <footer>
 
     </footer>
 </body>
+
 </html>
