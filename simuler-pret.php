@@ -1,5 +1,5 @@
 <script src="js/simulerPret.js" defer></script>
-<link rel="stylesheet" href="css/gestionPretClient.css">
+<link rel="stylesheet" href="css/simulerPret.css">
 <div class="gestion-pret-layout">
   <div class="col-gauche">
     <div class="content-zone"> 
@@ -7,34 +7,17 @@
     <div id="comparaison-controls">
         <button id="btn-comparer" type="button">Comparer</button>
     </div>
-
-    <div class="tri-container">
-            <span>Trier par :</span>
-            <div class="tri-buttons">
-                <button type="button" class="btn-tri" data-col="date_pret">Date</button>
-                <button type="button" class="btn-tri" data-col="montant">Montant</button>
-                <button type="button" class="btn-tri" data-col="duree">Durée</button>
-            </div>
-            <div class="tri-direction-group">
-                <label for="tri_direction">Sens :</label>
-                <select id="tri_direction" name="tri_direction">
-                    <option value="ASC">Ascendant</option>
-                    <option value="DESC">Descendant</option>
-                </select>
-            </div>
-        </div>
     <div class="table-container">
         <table id="lister-pret">
             <thead>
                 <tr>
                     <th>A comparer</th>
-                    <th>ID Simulation</th>
+                    <th>ID</th>
                     <th>Date</th>
-                    <th>Type</th>
                     <th>Compte</th>
                     <th>Montant</th>
                     <th>Durée</th>
-                    <th>Pourcentage Assurance</th>
+                    <th>Assurance % </th>
                     <th>Action</th>
                 </tr>
             </thead>

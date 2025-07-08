@@ -42,10 +42,6 @@ function afficherPrets(prets) {
             <td>${pret.id_simulation_pret}</td>
             <td class="date-cell">${pret.date_pret}</td>
             <td>
-                <span class="type-name">${typeName}</span>
-                ${pret.type_pret ? `<small class="type-details">${pret.type_pret.taux_annuel}% - ${pret.type_pret.description || ''}</small>` : ''}
-            </td>
-            <td>
                 <span class="compte-name">${compteName}</span>
                 ${pret.compte ? `<small class="compte-details-table">Solde: ${parseFloat(pret.compte.solde).toFixed(2)}€</small>` : ''}
             </td>
@@ -80,10 +76,15 @@ function comparerPrets() {
 
 
 
+// Utilitaire pour charger une fiche de prêt
+function chargerFichePret(id) {
+    return new Promise(resolve => ajax('GET', `/simulerPret/fichePret/${id}`, null, resolve));
+}
+
 function afficherFicheComparaison(id1, id2) {
     Promise.all([
-        new Promise(resolve => ajax('GET', `/simulerPret/fichePret/${id1}`, null, resolve)),
-        new Promise(resolve => ajax('GET', `/simulerPret/fichePret/${id2}`, null, resolve))
+        chargerFichePret(id1),
+        chargerFichePret(id2)
     ]).then(([res1, res2]) => {
         if (!res1.succes || !res2.succes) {
             alert('Erreur dans la récupération des prêts.');
@@ -101,12 +102,16 @@ function afficherFicheComparaison(id1, id2) {
             <div class="fiche-overlay">
                 <div class="fiche-modal comparaison">
                     <div class="fiche-header">
-                        <h3>Comparaison de prêts</h3>
+                        <h3 style="color: white;">Comparaison de prêts</h3>
                         <button class="btn-fermer-fiche" onclick="fermerFiche()">×</button>
                     </div>
                     <div class="fiche-content-comparaison">
-                        <div class="fiche-col">${ficheHTML1}</div>
-                        <div class="fiche-col">${ficheHTML2}</div>
+                        <div class="fiche-col" data-title="Prêt #1">
+                            <div class="fiche-col-content">${ficheHTML1}</div>
+                        </div>
+                        <div class="fiche-col" data-title="Prêt #2">
+                            <div class="fiche-col-content">${ficheHTML2}</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -221,20 +226,19 @@ function afficherFichePret(id) {
             <div class="fiche-overlay">
                 <div class="fiche-modal">
                     <div class="fiche-header">
-                        <h3>Fiche du prêt #${pret.id_simulation_pret}</h3>
+                        <h3 style="color:white;">Fiche du prêt #${pret.id_simulation_pret}</h3>
                         <button class="btn-fermer-fiche" onclick="fermerFiche()">×</button>
                     </div>
                     <div class="fiche-ajout-form">
                         <form class="form-ajouter-pret" onsubmit="event.preventDefault(); ajouterPretDepuisFiche(this);">
                             <input type="hidden" name="id_simulation_pret" value="${pret.id_simulation_pret}">
                             <input type="hidden" name="date_pret" value="${pret.date_pret}">
-                            <input type="hidden" name="type_pret_id" value="${typePret.id_type_pret}">
                             <input type="hidden" name="periode_id" value="${periode.id_periode}">
                             <input type="hidden" name="duree" value="${pret.duree}">
                             <input type="hidden" name="compte_id" value="${compte.id_compte}">
                             <input type="hidden" name="pourcentage_assurance" value="${pret.pourcentage_assurance}">
                             <input type="hidden" name="montant" value="${pret.montant}">
-                            <button type="submit" class="btn-ajouter-pret" style="margin-top: 12px;">➕ Ajouter ce prêt</button>
+                            <button type="submit" class="btn-ajouter-pret" style="margin-top: 12px;">➕ Valider cette simulation</button>
                         </form>
                     </div>
 

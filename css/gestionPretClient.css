@@ -960,6 +960,8 @@ table tbody tr:hover {
     padding: var(--space-xl);
     overflow-y: auto;
     max-height: calc(80vh - 100px);
+    display: flex;
+    flex-direction: column;
 }
 
 /* Informations du prêt */
@@ -968,6 +970,7 @@ table tbody tr:hover {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: var(--space-md);
+    flex-shrink: 0;
 }
 
 .info-row {
@@ -999,12 +1002,20 @@ table tbody tr:hover {
 }
 
 /* Section remboursements */
+.fiche-remboursements {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
 .fiche-remboursements h4 {
     color: var(--accent-color);
     font-size: 1.3rem;
     margin-bottom: var(--space-lg);
     padding-bottom: var(--space-sm);
     border-bottom: 2px solid var(--secondary-color);
+    flex-shrink: 0;
 }
 
 /* Tableau dans la fiche - aussi sans scroll */
@@ -1012,8 +1023,10 @@ table tbody tr:hover {
     background: var(--white);
     border-radius: var(--border-radius-sm);
     border: 1px solid var(--border-color);
-    overflow: hidden; /* Suppression du scroll dans la fiche aussi */
+    overflow: visible; /* Permet au contenu de s'étendre */
     box-shadow: var(--shadow-light);
+    flex-grow: 1;
+    min-height: 0;
 }
 
 .table-fiche {
