@@ -1,5 +1,5 @@
 <script src="js/gestionPretClient.js" defer></script>
-
+<link rel="stylesheet" href="css/gestionPretClient.css">
 <div class="gestion-pret-layout">
   <div class="col-gauche">
     <h2>Filtrer les prêts</h2>
@@ -60,6 +60,8 @@
                     <th>Compte</th>
                     <th>Montant</th>
                     <th>Durée</th>
+                    <th>Pourcentage Assurance</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -69,8 +71,6 @@
     </div>
     </div>
   </div>
-<div id="fiche-pret-container"></div>
-
 
   <div class="col-droite">
     <h2>Ajouter un prêt</h2>
@@ -97,7 +97,7 @@
                 </select>
             </div>
             <div class="form-group" style="flex:1;background:#fff3e0;padding:12px;border-radius:8px;">
-                <label for="duree">Durée (mois) :</label>
+                <label for="duree">Nombre de periode :</label>
                 <input type="number" id="duree" name="duree" required placeholder="12">
             </div>
         </div>
@@ -109,7 +109,12 @@
             </div>
         </div>
 
-        <div class="form-group" style="background:#fce4ec;padding:12px;border-radius:8px;margin-bottom:12px;">
+        <div class="form-group" style="background:#e8f5e9;padding:12px;border-radius:8px;margin-bottom:12px;">
+            <label for="pourcentage_assurance">Pourcentage Assurance :</label>
+            <input type="number" step="0.01" id="pourcentage_assurance" name="pourcentage_assurance" required placeholder="0">
+        </div>
+
+        <div class="form-group bg-money">
             <label for="montant">Montant :</label>
             <input type="number" step="0.01" id="montant" name="montant" required placeholder="0.00">
         </div>

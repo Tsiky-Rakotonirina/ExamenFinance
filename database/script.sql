@@ -79,6 +79,7 @@ CREATE TABLE pret (
     montant DECIMAL(15,2) NOT NULL,
     duree INT NOT NULL,
     periode_id INT NOT NULL,
+    pourcentage_assurance DECIMAL(5,2) NOT NULL,
     FOREIGN KEY (type_pret_id) REFERENCES type_pret(id_type_pret),
     FOREIGN KEY (compte_id) REFERENCES compte(id_compte),
     FOREIGN KEY (periode_id) REFERENCES periode(id_periode)
@@ -92,16 +93,17 @@ CREATE TABLE remboursement (
     base DECIMAL(15,2) NOT NULL,
     interet DECIMAL(15,2) NOT NULL,
     amortissement DECIMAL(15,2) NOT NULL,
+    mensualite DECIMAL(15,2) NOT NULL,
+    assurance DECIMAL(15,2) NOT NULL,
     a_payer DECIMAL(15,2) NOT NULL,
-    date_remboursement DATE,
     date_echeance DATE NOT NULL,
     FOREIGN KEY (pret_id) REFERENCES pret(id_pret)
 );
-CREATE TABLE Assurance (
-    id INT AUTO_INCREMENT PRIMARY KEY ,
+CREATE TABLE assurance (
+    id_assurance INT AUTO_INCREMENT PRIMARY KEY,
     pret_id INT NOT NULL,
     montant DECIMAL(15,2) NOT NULL,
     date_assurance DATE NOT NULL,
     FOREIGN KEY (pret_id) REFERENCES pret(id_pret)
-)
+);
 

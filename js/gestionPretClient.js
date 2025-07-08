@@ -88,13 +88,25 @@ function afficherPrets(prets) {
     tbody.innerHTML = '';
     prets.forEach(pret => {
         const row = document.createElement('tr');
+        
+        // Récupérer les noms des types et comptes depuis les données
+        const typeName = pret.type_pret ? pret.type_pret.nom : `Type #${pret.type_pret_id}`;
+        const compteName = pret.compte ? `${pret.compte.client.nom} - Compte #${pret.compte.id_compte}` : `Compte #${pret.compte_id}`;
+        
         row.innerHTML = `
             <td>${pret.id_pret}</td>
-            <td>${pret.date_pret}</td>
-            <td>${pret.type_pret_id}</td>
-            <td>${pret.compte_id}</td>
-            <td>${parseFloat(pret.montant).toFixed(2)}€</td>
-            <td>${pret.duree} mois</td>
+            <td class="date-cell">${pret.date_pret}</td>
+            <td>
+                <span class="type-name">${typeName}</span>
+                ${pret.type_pret ? `<small class="type-details">${pret.type_pret.taux_annuel}% - ${pret.type_pret.description || ''}</small>` : ''}
+            </td>
+            <td>
+                <span class="compte-name">${compteName}</span>
+                ${pret.compte ? `<small class="compte-details-table">Solde: ${parseFloat(pret.compte.solde).toFixed(2)}€</small>` : ''}
+            </td>
+            <td class="montant-cell">${parseFloat(pret.montant).toFixed(2)}€</td>
+            <td>${pret.duree}</td>
+            <td>${pret.pourcentage_assurance}</td>
             <td><button class="btn-fiche" data-id="${pret.id_pret}">Voir fiche</button></td>
         `;
         tbody.appendChild(row);
@@ -123,56 +135,116 @@ function afficherFichePret(id) {
         const periode = pret.periode || {};
         const remboursements = pret.remboursements || [];
 
-        // Création HTML
+        // Création HTML avec style moderne
         let ficheHTML = `
-            <h3>Fiche du prêt #${pret.id_pret}</h3>
-            <p><strong>Client :</strong> ${client.nom || 'N/A'}</p>
-            <p><strong>Compte :</strong> #${compte.id_compte || 'N/A'}</p>
-            <p><strong>Date :</strong> ${pret.date_pret}</p>
-            <p><strong>Type de prêt :</strong> ${typePret.nom} (${typePret.taux_annuel}% taux)</p>
-            <p><strong>Période :</strong> ${periode.nom} (${periode.nombre_mois} mois)</p>
-            <p><strong>Durée :</strong> ${pret.duree} mois</p>
-            <p><strong>Montant :</strong> ${parseFloat(pret.montant).toLocaleString('fr-FR', { minimumFractionDigits: 2 })} €</p>
-            <h4>Remboursements (${periode.libelle || 'Mensualité'}) :</h4>
-            <table style="border-collapse: collapse; width: 100%; margin-top:10px;">
-                <thead>
-                    <tr style="background:#f0f0f0">
-                        <th style="padding:6px;border:1px solid #ccc;">Période</th>
-                        <th style="padding:6px;border:1px solid #ccc;">Base</th>
-                        <th style="padding:6px;border:1px solid #ccc;">Intérêt</th>
-                        <th style="padding:6px;border:1px solid #ccc;">Amortissement</th>
-                        <th style="padding:6px;border:1px solid #ccc;">${periode.libelle}</th>
-                    </tr>
-                </thead>
-                <tbody>
+            <div class="fiche-overlay">
+                <div class="fiche-modal">
+                    <div class="fiche-header">
+                        <h3>Fiche du prêt #${pret.id_pret}</h3>
+                        <button class="btn-fermer-fiche" onclick="fermerFiche()">×</button>
+                    </div>
+                    <div class="fiche-content">
+                        <div class="fiche-info">
+                            <div class="info-row">
+                                <span class="info-label">Client :</span>
+                                <span class="info-value">${client.nom || 'N/A'}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Compte :</span>
+                                <span class="info-value">#${compte.id_compte || 'N/A'}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Date :</span>
+                                <span class="info-value">${pret.date_pret}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Type de prêt :</span>
+                                <span class="info-value">${typePret.nom} (${typePret.taux_annuel}% taux)</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Période :</span>
+                                <span class="info-value">${periode.nom} (${periode.nombre_mois} mois)</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Durée :</span>
+                                <span class="info-value">${pret.duree}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Pourcentage assurance :</span>
+                                <span class="info-value">${pret.pourcentage_assurance} %</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Montant :</span>
+                                <span class="info-value montant-principal">${parseFloat(pret.montant).toLocaleString('fr-FR', { minimumFractionDigits: 2 })} €</span>
+                            </div>
+                        </div>
+                        
+                        <div class="fiche-remboursements">
+                            <h4>Remboursements (${periode.libelle || 'Mensualité'}) :</h4>
+                            <div class="table-container-fiche">
+                                <table class="table-fiche">
+                                    <thead>
+                                        <tr>
+                                            <th>Période</th>
+                                            <th>Base</th>
+                                            <th>Intérêt</th>
+                                            <th>Amortissement</th>
+                                            <th>Mensualité</th>
+                                            <th>Assurance</th>
+                                            <th>A Payer</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
         `;
 
         remboursements.forEach(r => {
             ficheHTML += `
                 <tr>
-                    <td style="padding:6px;border:1px solid #ccc;">${r.periode_label}</td>
-                    <td style="padding:6px;border:1px solid #ccc;">${parseFloat(r.base).toFixed(2)} €</td>
-                    <td style="padding:6px;border:1px solid #ccc;">${parseFloat(r.interet).toFixed(2)} €</td>
-                    <td style="padding:6px;border:1px solid #ccc;">${parseFloat(r.amortissement).toFixed(2)} €</td>
-                    <td style="padding:6px;border:1px solid #ccc;">${parseFloat(r.a_payer).toFixed(2)} €</td>
+                    <td>${r.periode_label}</td>
+                    <td class="montant">${parseFloat(r.base).toFixed(2)} €</td>
+                    <td class="montant">${parseFloat(r.interet).toFixed(2)} €</td>
+                    <td class="montant">${parseFloat(r.amortissement).toFixed(2)} €</td>
+                    <td class="montant mensualite">${parseFloat(r.mensualite).toFixed(2)} €</td>
+                    <td class="montant mensualite">${parseFloat(r.assurance).toFixed(2)} €</td>
+                    <td class="montant mensualite">${parseFloat(r.a_payer).toFixed(2)} €</td>
                 </tr>
             `;
         });
 
         ficheHTML += `
-                </tbody>
-            </table>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         `;
 
-        const container = document.getElementById('fiche-pret-container');
-        if (container) {
-            container.innerHTML = ficheHTML;
-            container.scrollIntoView({ behavior: 'smooth' });
-        } else {
-            alert("Aucun conteneur prévu pour afficher la fiche du prêt.");
-            console.log(ficheHTML);
+        // Créer ou mettre à jour le conteneur flottant
+        let container = document.getElementById('fiche-pret-container');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'fiche-pret-container';
+            document.body.appendChild(container);
         }
+        
+        container.innerHTML = ficheHTML;
+        container.classList.add('fiche-visible');
+        
+        // Empêcher le scroll du body
+        document.body.style.overflow = 'hidden';
     });
+}
+
+// Fonction pour fermer la fiche
+function fermerFiche() {
+    const container = document.getElementById('fiche-pret-container');
+    if (container) {
+        container.classList.remove('fiche-visible');
+        container.innerHTML = '';
+        document.body.style.overflow = 'auto';
+    }
 }
 
 function ajouterPret() {
@@ -317,3 +389,17 @@ function escapeHtml(text) {
     };
     return text.replace(/[&<>"']/g, function(m) { return map[m]; });
 }
+
+// Gestion de la fermeture par clic sur l'overlay
+document.addEventListener('click', function(e) {
+    if (e.target && e.target.classList.contains('fiche-overlay')) {
+        fermerFiche();
+    }
+});
+
+// Gestion de la fermeture par touche Escape
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        fermerFiche();
+    }
+});

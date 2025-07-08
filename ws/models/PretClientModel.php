@@ -3,7 +3,7 @@ require_once __DIR__ . '/BaseModel.php';
 
 class PretClientModel extends BaseModel
 {
-    public static function genererTableauAnnuitesConstantes($capitalInitial, $tauxAnnuel, $duree, $nbMoisParPeriode)
+    public static function genererTableauMensualiteConstantes($capitalInitial, $tauxAnnuel, $duree, $nbMoisParPeriode, $assurance)
     {
         // Calculer le nombre total de mois (durée * nbMoisParPeriode)
         $nbMoisTotal = $duree * $nbMoisParPeriode;
@@ -31,8 +31,10 @@ class PretClientModel extends BaseModel
                 'capital_debut' => $capitalDebut,
                 'interet' => $interet,
                 'amortissement' => $amortissement,
-                'mensualite' => $mensualite, // Renommé pour plus de clarté
-                'capital_fin' => $capitalRestant
+                'capital_fin' => $capitalRestant,
+                'mensualite' => $mensualite, 
+                'assurance' => $assurance,
+                'a_payer' => $assurance + $mensualite 
             ];
         }
 
@@ -41,7 +43,7 @@ class PretClientModel extends BaseModel
 
     public static function ajouterRemboursement($data) {
         // Champs obligatoires pour la table remboursement
-        $champsObligatoires = ['pret_id', 'numero_periode', 'base', 'interet', 'amortissement', 'a_payer', 'date_echeance'];
+        $champsObligatoires = ['pret_id', 'numero_periode', 'base', 'interet', 'amortissement','assurance','mensualite', 'a_payer', 'date_echeance'];
         foreach ($champsObligatoires as $champ) {
             if (!isset($data[$champ]) || $data[$champ] === '' || $data[$champ] === null) {
                 $msg = "[Remboursement] Champ obligatoire manquant ou vide : $champ | Data: " . json_encode($data);
@@ -53,7 +55,7 @@ class PretClientModel extends BaseModel
             }
         }
         // On ne garde que les champs attendus pour la table remboursement
-        $champsRemb = ['pret_id', 'numero_periode', 'base', 'interet', 'amortissement', 'a_payer', 'date_remboursement', 'date_echeance'];
+        $champsRemb = ['pret_id', 'numero_periode', 'base', 'interet', 'amortissement', 'assurance', 'mensualite', 'a_payer', 'date_remboursement', 'date_echeance'];
         $dataRemb = [];
         foreach ($champsRemb as $champ) {
             if (array_key_exists($champ, $data)) $dataRemb[$champ] = $data[$champ];
@@ -66,7 +68,7 @@ class PretClientModel extends BaseModel
     }
 
     public static function ajouterPret($data){
-        $champsObligatoires = ['type_pret_id', 'montant', 'duree', 'compte_id', 'periode_id'];
+        $champsObligatoires = ['type_pret_id', 'montant', 'duree', 'compte_id', 'periode_id','pourcentage_assurance'];
         foreach ($champsObligatoires as $champ) {
             if (!isset($data[$champ]) || $data[$champ] === '') {
                 return ['succes' => false, 'message' => "Champ obligatoire manquant ou vide : $champ"];
@@ -91,13 +93,16 @@ class PretClientModel extends BaseModel
             return ['succes' => false, 'message' => 'Montant ou durée dépasse les limites autorisées.'];
         }
 
+        $assurance = round($data['montant'] * ($data['pourcentage_assurance'] / 100), 2);
+
         $dataPret = [
             'type_pret_id' => $data['type_pret_id'],
             'montant' => $data['montant'],
             'duree' => $data['duree'],
             'compte_id' => $data['compte_id'],
             'periode_id' => $data['periode_id'],
-            'date_pret' => $data['date_pret'] ?? date('Y-m-d')
+            'date_pret' => $data['date_pret'] ?? date('Y-m-d'),
+            'pourcentage_assurance' => $data['pourcentage_assurance']
         ];
 
         $resultPret = self::insererDonnee('pret', $dataPret);
@@ -105,11 +110,12 @@ class PretClientModel extends BaseModel
         $pretId = $resultPret['lastInsertId'];
         
         // Générer le tableau des mensualités
-        $tableau = self::genererTableauAnnuitesConstantes(
+        $tableau = self::genererTableauMensualiteConstantes(
             $data['montant'],
             $type['taux_annuel'],
             $data['duree'],
-            $nbMoisParPeriode
+            $nbMoisParPeriode,
+            $assurance
         );
 
         // Calculer la première date d'échéance : date du prêt + echeance_initiale mois
@@ -124,8 +130,9 @@ class PretClientModel extends BaseModel
                 'base' => $ligne['capital_debut'],
                 'interet' => $ligne['interet'],
                 'amortissement' => $ligne['amortissement'],
-                'a_payer' => $ligne['mensualite'], // Utiliser 'mensualite' au lieu de 'annuite'
-                'date_remboursement' => null,
+                'assurance' => $ligne['assurance'],
+                'mensualite' => $ligne['mensualite'],
+                'a_payer' => $ligne['a_payer'], 
                 'date_echeance' => $dateEcheance->format('Y-m-d')
             ]);
             
@@ -255,12 +262,16 @@ class PretClientModel extends BaseModel
             $somme_base = 0;
             $somme_interet = 0;
             $somme_amortissement = 0;
+            $somme_assurance = 0;
+            $somme_mensualite = 0;
             $somme_a_payer = 0;
 
             foreach ($groupe as $r) {
                 $somme_base += floatval($r['base']);
                 $somme_interet += floatval($r['interet']);
                 $somme_amortissement += floatval($r['amortissement']);
+                $somme_assurance += floatval($r['assurance']);
+                $somme_mensualite += floatval($r['mensualite']);
                 $somme_a_payer += floatval($r['a_payer']);
             }
 
@@ -269,6 +280,8 @@ class PretClientModel extends BaseModel
                 'base' => round($somme_base, 2),
                 'interet' => round($somme_interet, 2),
                 'amortissement' => round($somme_amortissement, 2),
+                'assurance' => round($somme_assurance, 2),
+                'mensualite' => round($somme_mensualite, 2),
                 'a_payer' => round($somme_a_payer, 2)
             ];
 
