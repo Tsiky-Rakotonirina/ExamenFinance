@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,4 +12,10 @@
     <a href="template.php?page=gestion-pret-client">GESTION PRET CLIENT</a><br>
     <a href="template.php?page=statistique-interet">STATISTIQUES</a><br>
 </body>
+</html>
+
+<body>
+    <a href="statistique-interet.php">Statistique Interet</a>
+</body>
+
 </html>

@@ -1,3 +1,4 @@
+
 -- Table : fond
 CREATE TABLE fond (
     id_fond INT AUTO_INCREMENT PRIMARY KEY,
@@ -84,7 +85,6 @@ CREATE TABLE pret (
     FOREIGN KEY (compte_id) REFERENCES compte(id_compte),
     FOREIGN KEY (periode_id) REFERENCES periode(id_periode)
 );
-
 
 CREATE TABLE remboursement (
     id_remboursement INT AUTO_INCREMENT PRIMARY KEY,
