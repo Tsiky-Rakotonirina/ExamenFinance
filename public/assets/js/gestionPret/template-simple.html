@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Prêts - Template Simple</title>
+    <style>
+        /* Styles de base pour le template simple */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+            padding: 20px;
+        }
+        
+        .gestion-pret-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .col-gauche, .col-droite {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        
+        .content-zone {
+            margin-top: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 16px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: background-color 0.2s;
+        }
+        
+        button:hover {
+            background: #2980b9;
+        }
+        
+        .filtre-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+        }
+        
+        .tri-container {
+            background: #f8f9fa;
+            padding: 16px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .tri-buttons {
+            display: flex;
+            gap: 8px;
+            margin: 10px 0;
+        }
+        
+        .btn-tri {
+            background: #6c757d;
+            font-size: 12px;
+            padding: 8px 12px;
+        }
+        
+        .btn-tri.active {
+            background: #28a745;
+        }
+        
+        .tri-direction-group {
+            margin-top: 10px;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            margin: 20px 0;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        tbody tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .types-pret-container, .comptes-container {
+            max-height: 120px;
+            overflow-y: auto;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 8px;
+        }
+        
+        .type-pret-item, .compte-item {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            margin: 4px 0;
+            background: #f8f9fa;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .type-pret-item:hover, .compte-item:hover {
+            background: #e9ecef;
+        }
+        
+        .type-pret-item.active, .compte-item.active {
+            background: #d4edda;
+            border: 2px solid #28a745;
+        }
+        
+        .pagination-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            padding: 16px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .pagination-info {
+            font-size: 14px;
+            color: #6c757d;
+        }
+        
+        .pagination-controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        
+        .pagination-controls button {
+            padding: 8px 12px;
+            font-size: 12px;
+        }
+        
+        .pagination-controls button:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+        
+        .items-per-page {
+            margin-left: 20px;
+        }
+        
+        .items-per-page select {
+            width: auto;
+            display: inline-block;
+            margin-left: 8px;
+        }
+        
+        #fiche-pret-container {
+            grid-column: 1 / -1;
+            margin-top: 20px;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 16px;
+            align-items: flex-end;
+            margin-bottom: 12px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+        }
+        
+        @media (max-width: 768px) {
+            .gestion-pret-layout {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Inclusion du JS spécifique -->
+<script>window.BASE_URL = "";</script>
+<script src="original.js" defer></script>
+
+<div class="gestion-pret-layout">
+  <div class="col-gauche">
+    <h2>Filtrer les prêts</h2>
+    <div class="content-zone">
+    <form id="filtre-prets">
+        <div class="form-group">
+            <label for="filtre_type_pret_id">Type de prêt :</label>
+            <select id="filtre_type_pret_id" name="type_pret_id">
+                <option value="">Tous</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="filtre_compte_id">Compte :</label>
+            <select id="filtre_compte_id" name="compte_id">
+                <option value="">Tous</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="filtre_montant_min">Montant min :</label>
+            <input type="number" id="filtre_montant_min" name="montant_min" step="0.01" placeholder="0.00">
+        </div>
+        
+        <div class="form-group">
+            <label for="filtre_montant_max">Montant max :</label>
+            <input type="number" id="filtre_montant_max" name="montant_max" step="0.01" placeholder="999999.99">
+        </div>
+        
+        <div class="filtre-actions">
+            <button type="submit">Filtrer</button>
+            <button type="button" id="reset-filtre">Reset</button>
+        </div>
+    </form>
+    <div class="tri-container">
+        <span>Trier par :</span>
+        <div class="tri-buttons">
+            <button type="button" class="btn-tri" data-col="date_pret">Date</button>
+            <button type="button" class="btn-tri" data-col="montant">Montant</button>
+            <button type="button" class="btn-tri" data-col="duree">Durée</button>
+        </div>
+        <div class="tri-direction-group">
+            <label for="tri_direction">Sens :</label>
+            <select id="tri_direction" name="tri_direction">
+                <option value="ASC">Ascendant</option>
+                <option value="DESC">Descendant</option>
+            </select>
+        </div>
+    </div>
+    <h2>Liste des prêts</h2>
+    <div class="table-container">
+        <table id="lister-pret">
+            <thead>
+                <tr>
+                    <th>ID Prêt</th>
+                    <th>Date</th>
+                    <th>Type</th>
+                    <th>Compte</th>
+                    <th>Montant</th>
+                    <th>Durée</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Les prêts seront affichés ici par JS -->
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Pagination -->
+    <div class="pagination-container">
+        <div class="pagination-info">
+            <span id="pagination-info">Affichage de 0 à 0 sur 0 prêts</span>
+        </div>
+        <div class="pagination-controls">
+            <button type="button" id="first-page">Premier</button>
+            <button type="button" id="prev-page">Précédent</button>
+            <span id="page-info">Page 1 sur 1</span>
+            <button type="button" id="next-page">Suivant</button>
+            <button type="button" id="last-page">Dernier</button>
+            <div class="items-per-page">
+                <label for="items-per-page">Par page:</label>
+                <select id="items-per-page">
+                    <option value="5">5</option>
+                    <option value="10" selected>10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    </div>
+  </div>
+<div id="fiche-pret-container"></div>
+
+
+  <div class="col-droite">
+    <h2>Ajouter un prêt</h2>
+    <div class="content-zone">
+    <form id="ajouter-pret" action="/ajouter-pret" method="post">
+        <div class="form-group">
+            <label for="date_pret">Date du prêt :</label>
+            <input type="date" id="date_pret" name="date_pret" required>
+        </div>
+
+        <div class="form-group" style="background:#e3f2fd;padding:12px;border-radius:8px;margin-bottom:12px;">
+            <label for="type_pret_id">Type de prêt :</label>
+            <div class="types-pret-container" id="types-pret-container">
+                <!-- Les types de prêt seront chargés ici par JS -->
+            </div>
+        </div>
+
+        <div class="form-row" style="display:flex;gap:16px;align-items:flex-end;margin-bottom:12px;">
+            <div class="form-group" style="flex:1;background:#fff3e0;padding:12px;border-radius:8px;">
+                <label for="periode_id">Période de remboursement :</label>
+                <select id="periode_id" name="periode_id" required>
+                    <option value="">Sélectionner...</option>
+                    <!-- Les périodes seront chargées ici par JS -->
+                </select>
+            </div>
+            <div class="form-group" style="flex:1;background:#fff3e0;padding:12px;border-radius:8px;">
+                <label for="duree">Durée (mois) :</label>
+                <input type="number" id="duree" name="duree" required placeholder="12">
+            </div>
+        </div>
+
+        <div class="form-group" style="background:#e8f5e9;padding:12px;border-radius:8px;margin-bottom:12px;">
+            <label for="compte_id">Compte :</label>
+            <div class="comptes-container" id="comptes-container">
+                <!-- Les comptes seront chargés ici par JS -->
+            </div>
+        </div>
+
+        <div class="form-group" style="background:#fce4ec;padding:12px;border-radius:8px;margin-bottom:12px;">
+            <label for="montant">Montant :</label>
+            <input type="number" step="0.01" id="montant" name="montant" required placeholder="0.00">
+        </div>
+
+        <button type="submit" id="btn-ajouter-pret">Ajouter le prêt</button>
+    </form>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
