@@ -71,7 +71,8 @@ document.addEventListener('DOMContentLoaded', () => {
     mois_max: parseInt(document.querySelector('#a_mois_max').value),
     montant_max: parseFloat(document.querySelector('#a_montant_max').value),
     taux_annuel: parseFloat(document.querySelector('#a_taux_annuel').value),
-    echeance_initiale: parseInt(document.querySelector('#a_echeance_initiale').value)
+    echeance_initiale: parseInt(document.querySelector('#a_echeance_initiale').value),
+    date_type_pret: new Date().toISOString().split('T')[0] 
   };
     if (!data.nom || isNaN(data.montant_max) || isNaN(data.taux_annuel)) {
       alert('Nom, montant max et taux_annuel valides obligatoires');

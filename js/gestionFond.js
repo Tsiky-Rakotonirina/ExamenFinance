@@ -101,8 +101,10 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    const data = 'montant=' + encodeURIComponent(montant);
-    ajax('POST', '/ajouter-fond', data, json => {
+    const now = new Date();
+    const dateFond = now.toISOString().slice(0, 10);
+    const data = { 'montant': montant, 'date_fond': dateFond };
+    ajax('POST', '/ajouter-fond', JSON.stringify(data), json => {
       alert(json.message || (json.succes ? 'Fond ajouté' : 'Erreur ajout'));
       if (json.succes) {
         document.querySelector('#ajouter-fond').reset();

@@ -14,7 +14,15 @@ class GestionFondController{
 
     public function ajouterFond() {
         $input = Flight::request()->data->getData();
-        $output = GestionFondModel::insererDonnee('fond', $input);
+        $data = [
+            'montant' => isset($input['montant']) ? $input['montant'] : null,
+            'date_fond' => isset($input['date_fond']) ? $input['date_fond'] : null
+        ];
+        if ($data['montant'] === null || !is_numeric($data['montant'])) {
+            Flight::json(['succes' => false, 'message' => 'Montant obligatoire et numérique.']);
+            return;
+        }
+        $output = GestionFondModel::insererDonnee('fond', $data);
         Flight::json($output);
     }
 

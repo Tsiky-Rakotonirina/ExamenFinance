@@ -1,22 +1,24 @@
-
 -- Table : fond
+DROP TABLE IF EXISTS fond;
 CREATE TABLE fond (
     id_fond INT AUTO_INCREMENT PRIMARY KEY,
-    date_fond DATE NOT NULL  DEFAULT CURRENT_DATE,
+    date_fond DATE NOT NULL,
     montant DECIMAL(15,2) NOT NULL
 );
 
 -- Table : status_type_pret
+DROP TABLE IF EXISTS status_type_pret;
 CREATE TABLE status_type_pret (
     id_type_pret INT AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(100) NOT NULL
 ); 
 
 -- Table : type_pret
+DROP TABLE IF EXISTS type_pret;
 CREATE TABLE type_pret (
     id_type_pret INT AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(100) NOT NULL,
-    date_type_pret DATE NOT NULL DEFAULT CURRENT_DATE,
+    date_type_pret DATE NOT NULL,
     status_type_pret_id INT NOT NULL,
     mois_max INT NOT NULL,
     montant_max DECIMAL(15,2) NOT NULL,
@@ -26,6 +28,7 @@ CREATE TABLE type_pret (
 );
 
 -- Table : historique_type_pret
+DROP TABLE IF EXISTS historique_type_pret;
 CREATE TABLE historique_type_pret (
     id_historique_type_pret INT AUTO_INCREMENT PRIMARY KEY,
     type_pret_id INT NOT NULL,
@@ -41,6 +44,7 @@ CREATE TABLE historique_type_pret (
 );
 
 -- Table : client
+DROP TABLE IF EXISTS client;
 CREATE TABLE client (
     id_client INT AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(100) NOT NULL,
@@ -50,12 +54,14 @@ CREATE TABLE client (
 );
 
 -- Table : status_compte
+DROP TABLE IF EXISTS status_compte;
 CREATE TABLE status_compte (
     id_status INT AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(100) NOT NULL
 );
 
 -- Table : compte
+DROP TABLE IF EXISTS compte;
 CREATE TABLE compte (
     id_compte INT AUTO_INCREMENT PRIMARY KEY,
     client_id INT NOT NULL,
@@ -65,16 +71,20 @@ CREATE TABLE compte (
     FOREIGN KEY (status_compte_id) REFERENCES status_compte(id_status)
 );
 
+-- Table : periode
+DROP TABLE IF EXISTS periode;
 CREATE TABLE periode (
     id_periode INT AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(100) NOT NULL,
     nombre_mois INT NOT NULL,
     libelle INT NOT NULL
 );
+
 -- Table : pret
+DROP TABLE IF EXISTS pret;
 CREATE TABLE pret (
     id_pret INT AUTO_INCREMENT PRIMARY KEY,
-    date_pret DATE NOT NULL DEFAULT CURRENT_DATE,
+    date_pret DATE NOT NULL ,
     type_pret_id INT NOT NULL,
     compte_id INT NOT NULL,
     montant DECIMAL(15,2) NOT NULL,
@@ -86,6 +96,8 @@ CREATE TABLE pret (
     FOREIGN KEY (periode_id) REFERENCES periode(id_periode)
 );
 
+-- Table : remboursement
+DROP TABLE IF EXISTS remboursement;
 CREATE TABLE remboursement (
     id_remboursement INT AUTO_INCREMENT PRIMARY KEY,
     pret_id INT NOT NULL,
@@ -100,9 +112,11 @@ CREATE TABLE remboursement (
     FOREIGN KEY (pret_id) REFERENCES pret(id_pret)
 );
 
+-- Table : simulation_pret
+DROP TABLE IF EXISTS simulation_pret;
 CREATE TABLE simulation_pret (
     id_simulation_pret INT AUTO_INCREMENT PRIMARY KEY,
-    date_pret DATE NOT NULL DEFAULT CURRENT_DATE,
+    date_pret DATE NOT NULL ,
     type_pret_id INT NOT NULL,
     compte_id INT NOT NULL,
     montant DECIMAL(15,2) NOT NULL,
@@ -114,6 +128,8 @@ CREATE TABLE simulation_pret (
     FOREIGN KEY (periode_id) REFERENCES periode(id_periode)
 );
 
+-- Table : simulation_remboursement
+DROP TABLE IF EXISTS simulation_remboursement;
 CREATE TABLE simulation_remboursement (
     id_simulation_remboursement INT AUTO_INCREMENT PRIMARY KEY,
     pret_id INT NOT NULL,
@@ -128,6 +144,8 @@ CREATE TABLE simulation_remboursement (
     FOREIGN KEY (pret_id) REFERENCES simulation_pret(id_simulation_pret)
 );
 
+-- Table : valider_simulation
+DROP TABLE IF EXISTS valider_simulation;
 CREATE TABLE valider_simulation (
     id_valider_simulation INT AUTO_INCREMENT PRIMARY KEY,
     simulation_pret_id INT NOT NULL,

@@ -5,8 +5,7 @@
 -- Donnees pour la table status_type_pret
 INSERT INTO status_type_pret (nom) VALUES
 ('Actif'),
-('Inactif'),
-('En attente');
+('Inactif');
 
 -- Donnees pour la table fond (Capital disponible pour les prêts)
 INSERT INTO fond (date_fond, montant) VALUES
@@ -62,7 +61,7 @@ INSERT INTO compte (client_id, status_compte_id, solde) VALUES
 (6, 2, 0.00),
 (7, 1, 45000.00),
 (8, 1, 18000.00),
-(9, 3, 5000.00),
+(9, 2, 5000.00),
 (10, 1, 32000.00);
 
 -- Donnees pour la table periode
@@ -75,22 +74,22 @@ INSERT INTO periode (nom, nombre_mois, libelle) VALUES
 
 -- Donnees pour la table pret (Prêts accordés)
 INSERT INTO pret (date_pret, type_pret_id, compte_id, montant, duree, periode_id, pourcentage_assurance) VALUES
-('2025-05-15', 1, 1, 25000.00, 24, 1, 0.50),
-('2025-05-20', 2, 4, 350000.00, 240, 1, 0.25),
-('2025-06-01', 3, 3, 15000.00, 48, 1, 0.30),
-('2025-06-05', 4, 7, 45000.00, 60, 1, 0.40),
-('2025-06-10', 1, 8, 18000.00, 18, 1, 0.50),
-('2025-06-15', 7, 10, 85000.00, 96, 1, 0.35);
+(NOW(), 1, 1, 25000.00, 24, 1, 0.50),
+(NOW(), 2, 4, 350000.00, 240, 1, 0.25),
+(NOW(), 3, 3, 15000.00, 48, 1, 0.30),
+(NOW(), 4, 7, 45000.00, 60, 1, 0.40),
+(NOW(), 1, 8, 18000.00, 18, 1, 0.50),
+(NOW(), 7, 10, 85000.00, 96, 1, 0.35);
 
 -- Donnees pour la table simulation_pret (Simulations effectuées)
 INSERT INTO simulation_pret (date_pret, type_pret_id, compte_id, montant, duree, periode_id, pourcentage_assurance) VALUES
-('2025-07-01', 1, 2, 30000.00, 24, 1, 0.50),
-('2025-07-02', 2, 5, 280000.00, 180, 1, 0.25),
-('2025-07-03', 4, 6, 35000.00, 48, 1, 0.40),
-('2025-07-04', 3, 9, 12000.00, 36, 1, 0.30),
-('2025-07-05', 7, 1, 65000.00, 84, 1, 0.35),
-('2025-07-06', 5, 4, 150000.00, 60, 3, 0.60),
-('2025-07-07', 6, 8, 8000.00, 12, 1, 1.00);
+(NOW(), 1, 2, 30000.00, 24, 1, 0.50),
+(NOW(), 2, 5, 280000.00, 180, 1, 0.25),
+(NOW(), 4, 6, 35000.00, 48, 1, 0.40),
+(NOW(), 3, 9, 12000.00, 36, 1, 0.30),
+(NOW(), 7, 1, 65000.00, 84, 1, 0.35),
+(NOW(), 5, 4, 150000.00, 60, 3, 0.60),
+(NOW(), 6, 8, 8000.00, 12, 1, 1.00);
 
 -- Exemples de remboursements pour le premier prêt (ID 1 - 25000€ sur 24 mois)
 INSERT INTO remboursement (pret_id, numero_periode, base, interet, amortissement, mensualite, assurance, a_payer, date_echeance) VALUES
@@ -108,7 +107,3 @@ INSERT INTO simulation_remboursement (pret_id, numero_periode, base, interet, am
 (2, 1, 280000.00, 886.67, 513.33, 1400.00, 58.33, 1458.33, '2025-08-02'),
 (2, 2, 279486.67, 885.06, 514.94, 1400.00, 58.33, 1458.33, '2025-09-02');
 
--- Validations de simulations (transformées en vrais prêts)
-INSERT INTO valider_simulation (simulation_pret_id, pret_id) VALUES
-(1, 6),
-(3, 7);
