@@ -252,15 +252,12 @@ function afficherFichePret(id) {
     });
 }
 function exporterFicheEnPDF(pretId) {
-    if (!window.jspdf || !window.jspdf.jsPDF) {
-        alert("La bibliothèque jsPDF n'est pas chargée. Veuillez vérifier l'inclusion du script jsPDF dans la page.");
-        return;
-    }
     ajax('GET', `/gestionPret/fichePret/${pretId}`, null, data => {
         if (!data || !data.succes) {
             alert("Erreur lors de la récupération des données du prêt pour l'exportation.");
             return;
         }
+
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
         
@@ -311,6 +308,7 @@ function exporterFicheEnPDF(pretId) {
             x += colWidths[i];
         });
         y += 10;
+
         // Lignes du tableau
         remboursements.forEach((r, index) => {
             const mensualite = r.mensualite ? parseFloat(r.mensualite).toFixed(2) : parseFloat(r.a_payer || 0).toFixed(2);
@@ -551,15 +549,12 @@ function trierLignesParColonne(colonne, asc = true) {
 }
 
 function exporterFicheEnPDF(pretId) {
-    if (!window.jspdf || !window.jspdf.jsPDF) {
-        alert("La bibliothèque jsPDF n'est pas chargée. Veuillez vérifier l'inclusion du script jsPDF dans la page.");
-        return;
-    }
     ajax('GET', `/gestionPret/fichePret/${pretId}`, null, data => {
         if (!data || !data.succes) {
             alert("Erreur lors de la récupération des données du prêt pour l'exportation.");
             return;
         }
+
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
         
