@@ -97,5 +97,11 @@ CREATE TABLE remboursement (
     date_echeance DATE NOT NULL,
     FOREIGN KEY (pret_id) REFERENCES pret(id_pret)
 );
-
+CREATE TABLE Assurance (
+    id INT AUTO_INCREMENT PRIMARY KEY ,
+    pret_id INT NOT NULL,
+    montant DECIMAL(15,2) NOT NULL,
+    date_assurance DATE NOT NULL,
+    FOREIGN KEY (pret_id) REFERENCES pret(id_pret)
+)
 
