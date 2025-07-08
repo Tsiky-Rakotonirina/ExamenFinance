@@ -26,7 +26,7 @@
                 Gestion Prêts Clients
             </a>
 
-            <a href="statistique-interet.php" class="nav-button btn-statistique">
+            <a href="template.php?page=statistique-interet" class="nav-button btn-statistique">
                 Statistiques Intérêts
             </a>
         </div>

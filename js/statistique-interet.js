@@ -1,28 +1,3 @@
-const urlBase = 'http://localhost:9443/ExamenFinance/ws';
-
-function ajax(method, url, data, callback) {
-    const xhr = new XMLHttpRequest();
-    console.log(`Requête AJAX : ${method} ${urlBase}${url} avec données :`, data);
-    xhr.open(method, urlBase + url, true);
-    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    xhr.onreadystatechange = () => {
-        if (xhr.readyState === 4) {
-            if (xhr.status === 200) {
-                try {
-                    callback(JSON.parse(xhr.responseText));
-                } catch (e) {
-                    console.error('Erreur lors du parsing JSON :', e.message);
-                    alert('Erreur lors du traitement de la réponse du serveur.');
-                }
-            } else {
-                console.error('Erreur réseau :', xhr.status, xhr.statusText);
-                alert('Erreur réseau lors de la communication avec le serveur.');
-            }
-        }
-    };
-    xhr.send(data);
-}
-
 document.addEventListener('DOMContentLoaded', () => {
     const btnFiltrer = document.querySelector('#btn-filtrer-statistiques');
     const moisMinSelect = document.querySelector('#mois_min');

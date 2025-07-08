@@ -252,12 +252,15 @@ function afficherFichePret(id) {
     });
 }
 function exporterFicheEnPDF(pretId) {
+    if (!window.jspdf || !window.jspdf.jsPDF) {
+        alert("La bibliothèque jsPDF n'est pas chargée. Veuillez vérifier l'inclusion du script jsPDF dans la page.");
+        return;
+    }
     ajax('GET', `/gestionPret/fichePret/${pretId}`, null, data => {
         if (!data || !data.succes) {
             alert("Erreur lors de la récupération des données du prêt pour l'exportation.");
             return;
         }
-
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
         
@@ -308,7 +311,6 @@ function exporterFicheEnPDF(pretId) {
             x += colWidths[i];
         });
         y += 10;
-
         // Lignes du tableau
         remboursements.forEach((r, index) => {
             const mensualite = r.mensualite ? parseFloat(r.mensualite).toFixed(2) : parseFloat(r.a_payer || 0).toFixed(2);
@@ -546,4 +548,98 @@ function trierLignesParColonne(colonne, asc = true) {
     });
     tbody.innerHTML = '';
     rows.forEach(row => tbody.appendChild(row));
+}
+
+function exporterFicheEnPDF(pretId) {
+    if (!window.jspdf || !window.jspdf.jsPDF) {
+        alert("La bibliothèque jsPDF n'est pas chargée. Veuillez vérifier l'inclusion du script jsPDF dans la page.");
+        return;
+    }
+    ajax('GET', `/gestionPret/fichePret/${pretId}`, null, data => {
+        if (!data || !data.succes) {
+            alert("Erreur lors de la récupération des données du prêt pour l'exportation.");
+            return;
+        }
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        
+        const pret = data.data;
+        const compte = pret.compte || {};
+        const client = compte.client || {};
+        const typePret = pret.type_pret || {};
+        const periode = pret.periode || {};
+        const remboursements = pret.remboursements || [];
+
+        let y = 20;
+        
+        // Titre
+        doc.setFontSize(16);
+        doc.text(`Fiche du prêt #${pret.id_pret}`, 20, y);
+        y += 20;
+
+        // Informations du prêt
+        doc.setFontSize(12);
+        doc.text(`Client : ${client.nom || 'N/A'}`, 20, y);
+        y += 10;
+        doc.text(`Compte : #${compte.id_compte || 'N/A'}`, 20, y);
+        y += 10;
+        doc.text(`Date : ${pret.date_pret || 'N/A'}`, 20, y);
+        y += 10;
+        doc.text(`Type de prêt : ${typePret.nom || 'N/A'} (${typePret.taux_annuel || '0'}% taux)`, 20, y);
+        y += 10;
+        doc.text(`Période : ${periode.nom || 'N/A'} (${periode.nombre_mois || '0'} mois)`, 20, y);
+        y += 10;
+        doc.text(`Durée : ${pret.duree || 'N/A'}`, 20, y);
+        y += 10;
+        doc.text(`Pourcentage assurance : ${pret.pourcentage_assurance || '0'} %`, 20, y);
+        y += 10;
+        doc.text(`Montant : ${parseFloat(pret.montant || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, " ")} €`, 20, y);
+        y += 20;
+
+        // Tableau des remboursements
+        doc.text(`Remboursements (${periode.libelle || 'Mensualité'}) :`, 20, y);
+        y += 15;
+
+        // En-tête du tableau
+        const headers = ['Période', 'Base', 'Intérêt', 'Amortissement', 'Mensualité', 'Assurance', 'A Payer'];
+        let x = 20;
+        const colWidths = [25, 25, 25, 30, 25, 25, 25];
+        
+        headers.forEach((header, i) => {
+            doc.text(header, x, y);
+            x += colWidths[i];
+        });
+        y += 10;
+        // Lignes du tableau
+        remboursements.forEach((r, index) => {
+            const mensualite = r.mensualite ? parseFloat(r.mensualite).toFixed(2) : parseFloat(r.a_payer || 0).toFixed(2);
+            const assurance = r.assurance ? parseFloat(r.assurance).toFixed(2) : '0.00';
+            
+            const row = [
+                r.periode_label || 'N/A',
+                `${parseFloat(r.base || 0).toFixed(2)}`,
+                `${parseFloat(r.interet || 0).toFixed(2)}`,
+                `${parseFloat(r.amortissement || 0).toFixed(2)}`,
+                `${mensualite}`,
+                `${assurance}`,
+                `${parseFloat(r.a_payer || 0).toFixed(2)}`
+            ];
+            
+            x = 20;
+            row.forEach((cell, i) => {
+                doc.text(cell, x, y);
+                x += colWidths[i];
+            });
+            y += 8;
+            
+            // Nouvelle page si nécessaire
+            if (y > 270) {
+                doc.addPage();
+                y = 20;
+            }
+        });
+
+        // Sauvegarder le PDF
+        doc.save(`fiche_pret_${pret.id_pret}.pdf`);
+    });
 }
