@@ -2,6 +2,7 @@ const urlBase = 'http://localhost:9443/ExamenFinance/ws';
 
 function ajax(method, url, data, callback) {
     const xhr = new XMLHttpRequest();
+    console.log(`Requête AJAX : ${method} ${urlBase}${url} avec données :`, data);
     xhr.open(method, urlBase + url, true);
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     xhr.onreadystatechange = () => {
@@ -39,47 +40,52 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Fonction pour charger les années disponibles
     function chargerAnneesDisponibles() {
-        ajax('GET', '/annees-disponibles', null, (json) => {
-            console.log('Réponse API /annees-disponibles :', json);
-            if (json.succes && json.data && Array.isArray(json.data)) {
-                // Ajouter les années comme valeurs min/max pour les inputs
-                const minAnnee = Math.min(...json.data.map(item => item.annee));
-                const maxAnnee = Math.max(...json.data.map(item => item.annee));
-                anneeMinInput.min = minAnnee;
-                anneeMinInput.max = maxAnnee;
-                anneeMaxInput.min = minAnnee;
-                anneeMaxInput.max = maxAnnee;
+        // Définir 2020 comme valeur par défaut pour les années, et 1 et 12 pour les mois
+        const anneeDefaut = 2020;
+        anneeMinInput.value = anneeDefaut;
+        anneeMaxInput.value = anneeDefaut;
+        moisMinSelect.value = '1'; // Janvier
+        moisMaxSelect.value = '12'; // Décembre
 
-                // Définir 2020 comme valeur par défaut pour les années, et 1 et 12 pour les mois
-                const anneeDefaut = 2020;
-                anneeMinInput.value = anneeDefaut;
-                anneeMaxInput.value = anneeDefaut;
-                moisMinSelect.value = '1'; // Janvier
-                moisMaxSelect.value = '12'; // Décembre
+        // Déclencher automatiquement la requête /interets-par-mois
+        const moisMin = moisMinSelect.value.trim();
+        const anneeMin = anneeMinInput.value.trim();
+        const moisMax = moisMaxSelect.value.trim();
+        const anneeMax = anneeMaxInput.value.trim();
 
-                // Déclencher automatiquement la requête /interets-par-mois
-                const moisMin = moisMinSelect.value.trim();
-                const anneeMin = anneeMinInput.value.trim();
-                const moisMax = moisMaxSelect.value.trim();
-                const anneeMax = anneeMaxInput.value.trim();
-
-                const data = `mois_min=${encodeURIComponent(moisMin)}&annee_min=${encodeURIComponent(anneeMin)}&mois_max=${encodeURIComponent(moisMax)}&annee_max=${encodeURIComponent(anneeMax)}`;
-                
-                ajax('GET', '/interets-par-mois?' + data, data, (json) => {
-                    console.log('Réponse API /interets-par-mois :', json);
-                    if (json.succes && json.data) {
-                        updateChart(json.data);
-                    } else {
-                        alert(json.message || 'Erreur lors du chargement des statistiques.');
-                        updateChart(Array(12).fill(0));
-                    }
-                });
+        const data = `mois_min=${encodeURIComponent(moisMin)}&annee_min=${encodeURIComponent(anneeMin)}&mois_max=${encodeURIComponent(moisMax)}&annee_max=${encodeURIComponent(anneeMax)}`;
+        
+        ajax('GET', '/interets-par-mois?' + data, data, (json) => {
+            console.log('Réponse API /interets-par-mois :', json);
+            if (json.succes && json.data) {
+                updateChart(json.data);
             } else {
-                console.error('Erreur lors du chargement des années :', json.message || 'Aucune donnée reçue');
-                anneeMinInput.value = '';
-                anneeMaxInput.value = '';
+                alert(json.message || 'Erreur lors du chargement des statistiques.');
                 updateChart(Array(12).fill(0));
             }
+        });
+    }
+
+    // Fonction pour mettre à jour le tableau
+    function updateTable(data) {
+        const moisLabels = [
+            'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+            'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+        ];
+        const interets = Object.values(data).map(val => parseFloat(val) || 0);
+        const tableBody = document.querySelector('#interetsTableBody');
+
+        // Vider le tableau
+        tableBody.innerHTML = '';
+
+        // Remplir le tableau
+        interets.forEach((interet, index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td style="padding: 0.7rem; border: 1px solid var(--border-color);">${moisLabels[index]}</td>
+                <td style="padding: 0.7rem; border: 1px solid var(--border-color); text-align: right;">${interet.toFixed(2)} €</td>
+            `;
+            tableBody.appendChild(row);
         });
     }
 
@@ -90,6 +96,9 @@ document.addEventListener('DOMContentLoaded', () => {
             'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
         ];
         const interets = Object.values(data).map(val => parseFloat(val) || 0);
+
+        // Mettre à jour le tableau
+        updateTable(data);
 
         // Détruire le graphique existant s'il existe
         if (interetsChart) {
