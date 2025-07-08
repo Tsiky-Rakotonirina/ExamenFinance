@@ -21,11 +21,34 @@ document.addEventListener('DOMContentLoaded', function() {
         chargerPrets();
     });
 
-    document.querySelectorAll('.btn-tri').forEach(button => {
-        button.addEventListener('click', function() {
+    // --- Tri sur clic direct sur l'en-tête du tableau ---
+    document.querySelectorAll('#lister-pret thead th[data-col]').forEach(th => {
+        th.style.cursor = 'pointer';
+        th.addEventListener('click', function() {
             const colonne = this.dataset.col;
-            const direction = document.getElementById('tri_direction').value;
-            trierPrets(colonne, direction);
+            if (!colonne) return;
+            if (colonneTriee === colonne) {
+                ordreAscendant = !ordreAscendant;
+            } else {
+                colonneTriee = colonne;
+                ordreAscendant = true;
+            }
+            trierLignesParColonne(colonne, ordreAscendant);
+        });
+    });
+
+    document.querySelectorAll('#lister-pret thead .tri-lien').forEach(span => {
+        span.style.cursor = 'pointer';
+        span.addEventListener('click', function() {
+            const colonne = this.dataset.col;
+            if (!colonne) return;
+            if (colonneTriee === colonne) {
+                ordreAscendant = !ordreAscendant;
+            } else {
+                colonneTriee = colonne;
+                ordreAscendant = true;
+            }
+            trierLignesParColonne(colonne, ordreAscendant);
         });
     });
 });
@@ -88,18 +111,11 @@ function afficherPrets(prets) {
     tbody.innerHTML = '';
     prets.forEach(pret => {
         const row = document.createElement('tr');
-        
-        // Récupérer les noms des types et comptes depuis les données
-        const typeName = pret.type_pret ? pret.type_pret.nom : `Type #${pret.type_pret_id}`;
+        // Récupérer le nom du compte
         const compteName = pret.compte ? `${pret.compte.client.nom} - Compte #${pret.compte.id_compte}` : `Compte #${pret.compte_id}`;
-        
         row.innerHTML = `
             <td>${pret.id_pret}</td>
             <td class="date-cell">${pret.date_pret}</td>
-            <td>
-                <span class="type-name">${typeName}</span>
-                ${pret.type_pret ? `<small class="type-details">${pret.type_pret.taux_annuel}% - ${pret.type_pret.description || ''}</small>` : ''}
-            </td>
             <td>
                 <span class="compte-name">${compteName}</span>
                 ${pret.compte ? `<small class="compte-details-table">Solde: ${parseFloat(pret.compte.solde).toFixed(2)}€</small>` : ''}
@@ -274,34 +290,6 @@ function filtrerPrets() {
     chargerPrets();
 }
 
-function trierPrets(colonne, direction) {
-    const tbody = document.querySelector('#lister-pret tbody');
-    const rows = Array.from(tbody.querySelectorAll('tr'));
-    rows.sort((a, b) => {
-        let valA, valB;
-        switch(colonne) {
-            case 'date_pret':
-                valA = new Date(a.cells[1].textContent);
-                valB = new Date(b.cells[1].textContent);
-                break;
-            case 'montant':
-                valA = parseFloat(a.cells[4].textContent.replace('€', ''));
-                valB = parseFloat(b.cells[4].textContent.replace('€', ''));
-                break;
-            case 'duree':
-                valA = parseInt(a.cells[5].textContent);
-                valB = parseInt(b.cells[5].textContent);
-                break;
-            default:
-                valA = a.cells[0].textContent;
-                valB = b.cells[0].textContent;
-        }
-        return direction === 'DESC' ? valB - valA : valA - valB;
-    });
-    tbody.innerHTML = '';
-    rows.forEach(row => tbody.appendChild(row));
-}
-
 function chargerTypesPretFormulaire() {
     const container = document.getElementById('types-pret-container');
     if (!container) return;
@@ -403,3 +391,54 @@ document.addEventListener('keydown', function(e) {
         fermerFiche();
     }
 });
+
+// Tri des lignes du tableau selon la colonne cliquée (tri ascendant, puis descend si re-cliqué)
+let colonneTriee = null;
+let ordreAscendant = true;
+
+document.querySelectorAll('.btn-tri').forEach(button => {
+    button.addEventListener('click', function() {
+        const colonne = this.dataset.col;
+        if (colonneTriee === colonne) {
+            ordreAscendant = !ordreAscendant;
+        } else {
+            colonneTriee = colonne;
+            ordreAscendant = true;
+        }
+        trierLignesParColonne(colonne, ordreAscendant);
+    });
+});
+
+function trierLignesParColonne(colonne, asc = true) {
+    const tbody = document.querySelector('#lister-pret tbody');
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+    // Associer colonne à l'index du tableau
+    let colIndex = 0;
+    switch(colonne) {
+        case 'id_pret': colIndex = 0; break;
+        case 'date_pret': colIndex = 1; break;
+        case 'type_pret': colIndex = 2; break;
+        case 'compte': colIndex = 3; break;
+        case 'montant': colIndex = 4; break;
+        case 'duree': colIndex = 5; break;
+        case 'pourcentage_assurance': colIndex = 6; break;
+        default: colIndex = 0;
+    }
+    rows.sort((a, b) => {
+        let valA = a.cells[colIndex].textContent.trim();
+        let valB = b.cells[colIndex].textContent.trim();
+        // Conversion pour tri numérique ou date si besoin
+        if (colonne === 'montant' || colonne === 'duree' || colonne === 'id_pret' || colonne === 'pourcentage_assurance') {
+            valA = parseFloat(valA.replace(/[^\d.-]/g, ''));
+            valB = parseFloat(valB.replace(/[^\d.-]/g, ''));
+        } else if (colonne === 'date_pret') {
+            valA = new Date(valA);
+            valB = new Date(valB);
+        }
+        if (valA < valB) return asc ? -1 : 1;
+        if (valA > valB) return asc ? 1 : -1;
+        return 0;
+    });
+    tbody.innerHTML = '';
+    rows.forEach(row => tbody.appendChild(row));
+}

@@ -34,33 +34,18 @@
             <button type="button" id="reset-filtre">Reset</button>
         </div>
     </form>
-    <div class="tri-container">
-        <span>Trier par :</span>
-        <div class="tri-buttons">
-            <button type="button" class="btn-tri" data-col="date_pret">Date</button>
-            <button type="button" class="btn-tri" data-col="montant">Montant</button>
-            <button type="button" class="btn-tri" data-col="duree">Durée</button>
-        </div>
-        <div class="tri-direction-group">
-            <label for="tri_direction">Sens :</label>
-            <select id="tri_direction" name="tri_direction">
-                <option value="ASC">Ascendant</option>
-                <option value="DESC">Descendant</option>
-            </select>
-        </div>
-    </div>
+    <!-- Suppression du bloc tri-container, on clique directement sur l'en-tête du tableau -->
     <h2>Liste des prêts</h2>
-    <div class="table-container">
-        <table id="lister-pret">
+    <div class="table-container" style="width: 1100px; max-width: 100%; margin: 0 auto;">
+        <table id="lister-pret" style="width: 100%;">
             <thead>
                 <tr>
-                    <th>ID Prêt</th>
-                    <th>Date</th>
-                    <th>Type</th>
-                    <th>Compte</th>
-                    <th>Montant</th>
-                    <th>Durée</th>
-                    <th>Pourcentage Assurance</th>
+                    <th id="th-id_pret" data-col="id_pret"><span class="tri-lien" data-col="id_pret">ID Prêt &#8597;</span></th>
+                    <th id="th-date_pret" data-col="date_pret"><span class="tri-lien" data-col="date_pret">Date &#8597;</span></th>
+                    <th id="th-compte" data-col="compte"><span class="tri-lien" data-col="compte">Compte &#8597;</span></th>
+                    <th id="th-montant" data-col="montant"><span class="tri-lien" data-col="montant">Montant &#8597;</span></th>
+                    <th id="th-duree" data-col="duree"><span class="tri-lien" data-col="duree">Durée &#8597;</span></th>
+                    <th id="th-pourcentage_assurance" data-col="pourcentage_assurance"><span class="tri-lien" data-col="pourcentage_assurance">% Assurance &#8597;</span></th>
                     <th>Action</th>
                 </tr>
             </thead>
