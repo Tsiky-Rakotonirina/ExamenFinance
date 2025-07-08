@@ -9,7 +9,7 @@ CREATE TABLE fond (
 CREATE TABLE status_type_pret (
     id_type_pret INT AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(100) NOT NULL
-);
+); 
 
 -- Table : type_pret
 CREATE TABLE type_pret (

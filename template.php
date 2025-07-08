@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="css/template.css">
     <link rel="stylesheet" href="css/default.css">
     <script>
-        const urlBase = 'http://localhost:9443/ExamenFinance/ws';
+        const urlBase = 'http://localhost:80/S4/ExamenFinance/ws';
 
         function ajax(method, url, data, callback) {
             const xhr = new XMLHttpRequest();
